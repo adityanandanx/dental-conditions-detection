@@ -75,9 +75,6 @@ export function DCMDropzone() {
                   </p>
                 </div>
                 <div className="flex items-center">
-                  <Button size={"icon"} variant={"ghost"}>
-                    <ExpandIcon />
-                  </Button>
                   <DropzoneRemoveFile variant="ghost" size={"icon"}>
                     <Trash2Icon className="size-4" />
                   </DropzoneRemoveFile>
