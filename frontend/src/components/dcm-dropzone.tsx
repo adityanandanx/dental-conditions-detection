@@ -10,7 +10,9 @@ import {
   DropzoneTrigger,
   useDropzone,
 } from "@/components/ui/dropzone";
-import { CloudUploadIcon, Trash2Icon } from "lucide-react";
+import { CloudUploadIcon, ExpandIcon, Trash2Icon } from "lucide-react";
+import { DicomImagePreview } from "./dicom-image-preview";
+import { Button } from "./ui/button";
 
 export function DCMDropzone() {
   const dropzone = useDropzone({
@@ -18,7 +20,7 @@ export function DCMDropzone() {
       await new Promise((resolve) => setTimeout(resolve, 1000));
       return {
         status: "success",
-        result: URL.createObjectURL(file),
+        result: file, // Return the file object instead of blob URL
       };
     },
     validation: {
@@ -52,7 +54,7 @@ export function DCMDropzone() {
           </DropZoneArea>
         </div>
 
-        <DropzoneFileList className="gap-3 p-0">
+        <DropzoneFileList className="gap-3 grid grid-cols-2 p-0">
           {dropzone.fileStatuses.map((file) => (
             <DropzoneFileListItem
               className="overflow-hidden rounded-md bg-secondary p-0 shadow-sm"
@@ -63,26 +65,23 @@ export function DCMDropzone() {
                 <div className="aspect-video animate-pulse bg-black/20" />
               )}
               {file.status === "success" && (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={file.result}
-                  alt={`uploaded-${file.fileName}`}
-                  className="aspect-video object-cover"
-                />
+                <DicomImagePreview file={file.file} />
               )}
               <div className="flex items-center justify-between p-2 pl-4">
-                <div className="min-w-0">
+                <div className="min-w-0 flex-1">
                   <p className="truncate text-sm">{file.fileName}</p>
                   <p className="text-xs text-muted-foreground">
                     {(file.file.size / (1024 * 1024)).toFixed(2)} MB
                   </p>
                 </div>
-                <DropzoneRemoveFile
-                  variant="ghost"
-                  className="shrink-0 hover:outline"
-                >
-                  <Trash2Icon className="size-4" />
-                </DropzoneRemoveFile>
+                <div className="flex items-center">
+                  <Button size={"icon"} variant={"ghost"}>
+                    <ExpandIcon />
+                  </Button>
+                  <DropzoneRemoveFile variant="ghost" size={"icon"}>
+                    <Trash2Icon className="size-4" />
+                  </DropzoneRemoveFile>
+                </div>
               </div>
             </DropzoneFileListItem>
           ))}
