@@ -77,14 +77,15 @@ export const DicomImagePreview = ({ file }: { file: File }) => {
           alt={`DICOM preview - ${file.name}`}
           fill
           className="object-contain"
-          unoptimized
+          unoptimized // Required for data URLs
         />
       </DialogTrigger>
       <DialogContent className="flex flex-col max-w-[90%] sm:max-w-[90%] max-h-[95vh]">
         <DialogHeader>
           <DialogTitle>{file.name}</DialogTitle>
           <DialogDescription>
-            {(file.size / (1024 * 1024)).toFixed(2)} MB
+            {(file.size / (1024 * 1024)).toFixed(2)} MB • {imageSize?.width} ×{" "}
+            {imageSize?.height}
           </DialogDescription>
         </DialogHeader>
         <Image
@@ -93,6 +94,7 @@ export const DicomImagePreview = ({ file }: { file: File }) => {
           width={imageSize?.width || 0}
           height={imageSize?.height || 0}
           className="object-contain rounded-md overflow-hidden w-full h-full bg-secondary"
+          unoptimized // Required for data URLs
         />
         <DialogFooter className="self-center">
           <DialogClose asChild>

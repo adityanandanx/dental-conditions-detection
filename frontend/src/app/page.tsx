@@ -1,7 +1,6 @@
 "use client";
 import { DCMDropzone } from "@/components/dcm-dropzone";
 import Nav from "@/components/nav";
-import { Button } from "@/components/ui/button";
 
 export default function Home() {
   return (
@@ -9,7 +8,7 @@ export default function Home() {
       <Nav />
       <main className="flex flex-1">
         <div className="w-lg p-10">
-          <h1 className="text-2xl font-bold mb-5">X-Ray Image</h1>
+          <h1 className="text-2xl font-bold">X-Ray Image</h1>
           <DCMDropzone />
         </div>
         <div className="flex-1 p-10">
