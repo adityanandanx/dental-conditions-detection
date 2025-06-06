@@ -17,7 +17,11 @@ export async function convertDicomToImageUrl(
   file: File,
   format: "jpeg" | "png" = "jpeg",
   quality: number = 0.8
-): Promise<string> {
+): Promise<{
+  dataUrl: string;
+  width: number;
+  height: number;
+}> {
   // Ensure native decoders are initialized
   try {
     await NativePixelDecoder.initializeAsync({
@@ -62,7 +66,11 @@ export async function convertDicomToImageUrl(
   const mimeType = format === "jpeg" ? "image/jpeg" : "image/png";
   const dataUrl = canvas.toDataURL(mimeType, quality);
 
-  return dataUrl;
+  return {
+    dataUrl,
+    width: renderingResult.width,
+    height: renderingResult.height,
+  };
 }
 
 /**
@@ -77,7 +85,7 @@ export async function convertDicomToBlob(
   format: "jpeg" | "png" = "jpeg",
   quality: number = 0.8
 ): Promise<Blob> {
-  const dataUrl = await convertDicomToImageUrl(file, format, quality);
+  const { dataUrl } = await convertDicomToImageUrl(file, format, quality);
 
   // Convert data URL to blob
   const response = await fetch(dataUrl);

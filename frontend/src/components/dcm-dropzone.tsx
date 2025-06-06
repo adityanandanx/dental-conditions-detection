@@ -10,9 +10,8 @@ import {
   DropzoneTrigger,
   useDropzone,
 } from "@/components/ui/dropzone";
-import { CloudUploadIcon, ExpandIcon, Trash2Icon } from "lucide-react";
+import { CloudUploadIcon, Trash2Icon } from "lucide-react";
 import { DicomImagePreview } from "./dicom-image-preview";
-import { Button } from "./ui/button";
 
 export function DCMDropzone() {
   const dropzone = useDropzone({
