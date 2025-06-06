@@ -6,12 +6,11 @@ A FastAPI-based REST API for detecting dental conditions (cavities and periapica
 
 ```
 backend/
-├── main.py                     # Application entry point
-├── config.py                   # Legacy config (redirects to app.core.config)
-├── pyproject.toml             # Project dependencies
+├── pyproject.toml             # Project dependencies and configuration
+├── uv.lock                    # UV lock file for dependencies
 ├── app/
 │   ├── __init__.py
-│   ├── main.py                # FastAPI app factory
+│   ├── main.py                # FastAPI app factory and entry point
 │   ├── api/
 │   │   ├── __init__.py
 │   │   └── routes.py          # API endpoints
@@ -28,8 +27,6 @@ backend/
 │   └── services/
 │       ├── __init__.py
 │       └── inference_service.py # Business logic
-└── core/
-    └── inference.py           # Legacy inference (to be removed)
 ```
 
 ## API Endpoints
@@ -77,29 +74,30 @@ DEBUG=false
 
 ## Installation
 
-1. Install dependencies:
+1. Install dependencies using UV:
 
 ```bash
-pip install -e .
+uv sync
 ```
 
 2. Run the development server:
 
 ```bash
-python main.py
+uv run python -m app.main
 # or
-uvicorn main:app --reload
+uv run uvicorn app.main:app --reload
 ```
 
 ## Features
 
 - **Type-safe**: Full Pydantic model validation
-- **Error handling**: Comprehensive exception handling
-- **File validation**: Automatic file type and size validation
+- **Error handling**: Comprehensive exception handling with proper logging
+- **File validation**: Efficient file type and size validation
 - **Logging**: Structured logging throughout the application
 - **Documentation**: Auto-generated OpenAPI docs at `/docs`
 - **Health checks**: Built-in health check endpoint
 - **CORS support**: Configurable CORS middleware
+- **Security**: Environment-based configuration with proper secret management
 
 ## Architecture
 
@@ -110,3 +108,4 @@ The application follows FastAPI best practices with:
 - **Service layer**: Business logic encapsulated in service classes
 - **Exception handling**: Global and custom exception handlers
 - **Configuration management**: Environment-based configuration with Pydantic Settings
+- **Efficient file handling**: Proper memory management for file uploads

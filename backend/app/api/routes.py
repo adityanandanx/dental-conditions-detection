@@ -23,11 +23,9 @@ router = APIRouter(prefix="/api/v1", tags=["detection"])
     },
 )
 async def detect_dental_conditions(
-    file: UploadFile = File(..., description="Dental image file (JPEG, PNG)"),
-    inference_service: Annotated[
-        InferenceService, Depends(get_inference_service)
-    ] = None,
-    settings: Annotated[Settings, Depends(get_settings)] = None,
+    file: UploadFile,
+    inference_service: Annotated[InferenceService, Depends(get_inference_service)],
+    settings: Annotated[Settings, Depends(get_settings)],
 ) -> DetectionResponse:
     """
     Detect cavities and periapical lesions in uploaded dental image
@@ -43,15 +41,21 @@ async def detect_dental_conditions(
             detail=f"File must be one of: {', '.join(settings.allowed_file_types)}",
         )
 
-    # Validate file size
-    file_size = 0
-    content = await file.read()
-    file_size = len(content)
-
-    if file_size > settings.max_file_size:
+    # Validate file size efficiently using seek
+    if file.size and file.size > settings.max_file_size:
         raise HTTPException(
             status_code=413,
-            detail=f"File size ({file_size} bytes) exceeds maximum allowed size ({settings.max_file_size} bytes)",
+            detail=f"File size ({file.size} bytes) exceeds maximum allowed size ({settings.max_file_size} bytes)",
+        )
+
+    # Read content only once
+    content = await file.read()
+
+    # Double-check size if not available from file.size
+    if not file.size and len(content) > settings.max_file_size:
+        raise HTTPException(
+            status_code=413,
+            detail=f"File size ({len(content)} bytes) exceeds maximum allowed size ({settings.max_file_size} bytes)",
         )
 
     # Save uploaded file temporarily
@@ -74,7 +78,7 @@ async def detect_dental_conditions(
         # Re-raise HTTP exceptions as-is
         raise
     except Exception as e:
-        logger.error(f"Unexpected error in detection endpoint: {str(e)}")
+        logger.error(f"Unexpected error in detection endpoint: {str(e)}", exc_info=True)
         raise HTTPException(
             status_code=500, detail="An unexpected error occurred during processing"
         )
@@ -100,11 +104,9 @@ async def detect_dental_conditions(
     },
 )
 async def detect_dental_conditions_dicom(
-    file: UploadFile = File(..., description="DICOM file (.dcm)"),
-    inference_service: Annotated[
-        InferenceService, Depends(get_inference_service)
-    ] = None,
-    settings: Annotated[Settings, Depends(get_settings)] = None,
+    file: UploadFile,
+    inference_service: Annotated[InferenceService, Depends(get_inference_service)],
+    settings: Annotated[Settings, Depends(get_settings)],
 ) -> DicomDetectionResponse:
     """
     Detect cavities and periapical lesions in uploaded DICOM file
@@ -168,7 +170,9 @@ async def detect_dental_conditions_dicom(
         # Re-raise HTTP exceptions as-is
         raise
     except Exception as e:
-        logger.error(f"Unexpected error in DICOM detection endpoint: {str(e)}")
+        logger.error(
+            f"Unexpected error in DICOM detection endpoint: {str(e)}", exc_info=True
+        )
         raise HTTPException(
             status_code=500,
             detail="An unexpected error occurred during DICOM processing",
