@@ -270,16 +270,28 @@ version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "fastapi", extra = ["standard"] },
+    { name = "gdcm" },
     { name = "inference-sdk" },
+    { name = "pillow" },
     { name = "pydantic-settings" },
+    { name = "pydicom" },
+    { name = "pylibjpeg" },
+    { name = "pylibjpeg-libjpeg" },
+    { name = "pylibjpeg-openjpeg" },
     { name = "python-dotenv" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "fastapi", extras = ["standard"], specifier = ">=0.115.12" },
+    { name = "gdcm", specifier = ">=1.1" },
     { name = "inference-sdk", specifier = ">=0.50.3" },
+    { name = "pillow", specifier = ">=11.2.1" },
     { name = "pydantic-settings", specifier = ">=2.9.1" },
+    { name = "pydicom", specifier = ">=3.0.1" },
+    { name = "pylibjpeg", specifier = ">=2.0.1" },
+    { name = "pylibjpeg-libjpeg", specifier = ">=2.3.0" },
+    { name = "pylibjpeg-openjpeg", specifier = ">=2.4.0" },
     { name = "python-dotenv", specifier = ">=1.1.0" },
 ]
 
@@ -422,6 +434,15 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/bb/2c/ee21987c3a175b49d0b827b1e45394a7a5d08c7de5b766ed6d0889d30568/frozenlist-1.6.2-cp313-cp313t-win32.whl", hash = "sha256:76857098ee17258df1a61f934f2bae052b8542c9ea6b187684a737b2e3383a65", size = 44644, upload_time = "2025-06-03T21:47:34.514Z" },
     { url = "https://files.pythonhosted.org/packages/65/46/fce60f65b1fb17a90c4bf410a5c90cb3b40616cc229e75866f8be97c112c/frozenlist-1.6.2-cp313-cp313t-win_amd64.whl", hash = "sha256:c06a88daba7e891add42f9278cdf7506a49bc04df9b1648be54da1bf1c79b4c6", size = 50607, upload_time = "2025-06-03T21:47:36.227Z" },
     { url = "https://files.pythonhosted.org/packages/13/be/0ebbb283f2d91b72beaee2d07760b2c47dab875c49c286f5591d3d157198/frozenlist-1.6.2-py3-none-any.whl", hash = "sha256:947abfcc8c42a329bbda6df97a4b9c9cdb4e12c85153b3b57b9d2f02aa5877dc", size = 12582, upload_time = "2025-06-03T21:48:03.201Z" },
+]
+
+[[package]]
+name = "gdcm"
+version = "1.1"
+source = { registry = "https://pypi.org/simple" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/dd/65/82789cb6ac4a7bcc126721def19f05f866973ea0c61c6da51d069e9a57d3/gdcm-1.1-py3-none-manylinux1_x86_64.whl", hash = "sha256:dd2d3688560289c8333d53043926b0a179ad640aca9c14988ca1912e82270b49", size = 2720947, upload_time = "2020-12-04T04:09:48.399Z" },
+    { url = "https://files.pythonhosted.org/packages/ec/45/eb03dc3d3813a2840bddeb5eb91782de6d06c423aeed1ebaff462a083cf3/gdcm-1.1-py3-none-win_amd64.whl", hash = "sha256:3322b45a3b056d91db32663a42949f9d6886da0d74dfde2f330bd0efa8072b89", size = 3982935, upload_time = "2020-12-04T04:34:53.208Z" },
 ]
 
 [[package]]
@@ -994,12 +1015,79 @@ wheels = [
 ]
 
 [[package]]
+name = "pydicom"
+version = "3.0.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/d7/6f/55ea163b344c91df2e03c007bebf94781f0817656e2c037d7c5bf86c3bfc/pydicom-3.0.1.tar.gz", hash = "sha256:7b8be344b5b62493c9452ba6f5a299f78f8a6ab79786c729b0613698209603ec", size = 2884731, upload_time = "2024-09-22T02:02:43.202Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/27/a6/98651e752a49f341aa99aa3f6c8ba361728dfc064242884355419df63669/pydicom-3.0.1-py3-none-any.whl", hash = "sha256:db32f78b2641bd7972096b8289111ddab01fb221610de8d7afa835eb938adb41", size = 2376126, upload_time = "2024-09-22T02:02:41.616Z" },
+]
+
+[[package]]
 name = "pygments"
 version = "2.19.1"
 source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/7c/2d/c3338d48ea6cc0feb8446d8e6937e1408088a72a39937982cc6111d17f84/pygments-2.19.1.tar.gz", hash = "sha256:61c16d2a8576dc0649d9f39e089b5f02bcd27fba10d8fb4dcc28173f7a45151f", size = 4968581, upload_time = "2025-01-06T17:26:30.443Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/8a/0b/9fcc47d19c48b59121088dd6da2488a49d5f72dacf8262e2790a1d2c7d15/pygments-2.19.1-py3-none-any.whl", hash = "sha256:9ea1544ad55cecf4b8242fab6dd35a93bbce657034b0611ee383099054ab6d8c", size = 1225293, upload_time = "2025-01-06T17:26:25.553Z" },
+]
+
+[[package]]
+name = "pylibjpeg"
+version = "2.0.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "numpy" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/7c/65/34b3da5d0f8fabf09f2f8d5db2977e307d0aa2cdba6c605338005e91077d/pylibjpeg-2.0.1.tar.gz", hash = "sha256:3beae5cf829f83bf0c1e5640c3b655bc0f406b8be302215e72f8d31a4185a947", size = 21314, upload_time = "2024-06-17T03:07:20.482Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/1f/ab/8181a9ddcca65487f9f0e9054da7675ecc701fca29904c7d9d44fa8789a7/pylibjpeg-2.0.1-py3-none-any.whl", hash = "sha256:90b611304c99b0752c0e0d78d3c3c25ea0b1a53c82e40c78f347367a8709edcc", size = 24562, upload_time = "2024-06-17T03:07:19.106Z" },
+]
+
+[[package]]
+name = "pylibjpeg-libjpeg"
+version = "2.3.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "numpy" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/6a/39/d44c4124d8e97a3d5b5e87da5d5f096e010eb83670351bc0e9c77c0febd5/pylibjpeg_libjpeg-2.3.0.tar.gz", hash = "sha256:ffb736acee1dfd446f387d45dfec83a144c7971e5cde290d9aafefa5dee99dd0", size = 671494, upload_time = "2024-10-27T02:36:21.316Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/81/84/57e1742d727b3e7bf0c8ad99cd8c0daf79be44fff89c70f051b28f6edec8/pylibjpeg_libjpeg-2.3.0-cp312-cp312-macosx_10_13_x86_64.whl", hash = "sha256:7461d83d23412fd5596f42858fa414e4ac48632160e17d77875f5fd6b4925af9", size = 676306, upload_time = "2024-10-27T02:35:47.053Z" },
+    { url = "https://files.pythonhosted.org/packages/18/31/2b55e7f821bfe37cbf5805441ea339c9b50b8159062e06efca84d23d64c5/pylibjpeg_libjpeg-2.3.0-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:86ef2285ffafcce6c492738c5f707c0a7141fb8f6e0a3392a2495f653965379f", size = 602273, upload_time = "2024-10-27T02:35:49.538Z" },
+    { url = "https://files.pythonhosted.org/packages/15/8a/585b966385c2a0817b8699cfd4aea85e71fc02f4da3337e473b2eca83d60/pylibjpeg_libjpeg-2.3.0-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:61e433d3e94e3a66c303fc82b354489abb79487659ca681c62365d6e6d847470", size = 3289076, upload_time = "2024-10-27T02:35:51.555Z" },
+    { url = "https://files.pythonhosted.org/packages/79/14/449696a3a4527a1e6a6bac2b4eb0f6a9b512a94a56bbaf1946db06a48122/pylibjpeg_libjpeg-2.3.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:a630e38fd85aad11d0cec247d42d4a4bac86f2614b6eade2619ef821627ad8bb", size = 3407533, upload_time = "2024-10-27T02:35:53.539Z" },
+    { url = "https://files.pythonhosted.org/packages/e5/5e/bfc26cfdd692ae0a051f4e3fda0930ef024782e84402a88584211656f01e/pylibjpeg_libjpeg-2.3.0-cp312-cp312-win32.whl", hash = "sha256:865cb985fc0671908881d54455fc6a72cfe02f6f047f9330f4ba8852b81ed7c0", size = 730091, upload_time = "2024-10-27T02:35:55.327Z" },
+    { url = "https://files.pythonhosted.org/packages/68/86/415cc7676219f581f54ca7340d77fa0dd4f0157057f59ead33a9d916c2b3/pylibjpeg_libjpeg-2.3.0-cp312-cp312-win_amd64.whl", hash = "sha256:05d04602b81fa9eb8c33147cf54224725141358f8bf66fd2677bbef5c0e19a48", size = 743955, upload_time = "2024-10-27T02:35:57.455Z" },
+    { url = "https://files.pythonhosted.org/packages/40/42/78fe92094c6e850fd465375cd86efa708153ce60748a89f499b4c26b282c/pylibjpeg_libjpeg-2.3.0-cp313-cp313-macosx_10_13_x86_64.whl", hash = "sha256:df5db32f1ddfb47c30de9613ace38a0e685f75bf30bd42594c8d54057e5fb8a9", size = 676021, upload_time = "2024-10-27T02:35:59.35Z" },
+    { url = "https://files.pythonhosted.org/packages/f7/dc/eb4e1882cc745c5b3f8c8cca6c3a0317b2b0ec22e7e483219f4e1e3a6704/pylibjpeg_libjpeg-2.3.0-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:87f334baddb5f7606cb999e3c96e900d25a320b35bf3c0f5061fb2679e876841", size = 600982, upload_time = "2024-10-27T02:36:01.572Z" },
+    { url = "https://files.pythonhosted.org/packages/ba/39/cbe60564dc0033ff45cd1a3756d58817bc3bf4100b5ce0c8f4f9bb3b33f8/pylibjpeg_libjpeg-2.3.0-cp313-cp313-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:5acf60b2d531bafccc5d8edabd59fc4c542d835ef8772392d6690a994ca9aef0", size = 3281365, upload_time = "2024-10-27T02:36:03.736Z" },
+    { url = "https://files.pythonhosted.org/packages/45/55/8873e0d29ce163acecb035b642c7b5bc04972489248f0ad60ebe47dd90e5/pylibjpeg_libjpeg-2.3.0-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:7744848b239e969162ad65dd2bc7470e14d9eb324ee26d519bd8012fb8e237b8", size = 3401123, upload_time = "2024-10-27T02:36:05.712Z" },
+    { url = "https://files.pythonhosted.org/packages/a5/01/6eed5b15ccdb21e6898815d482cda70987e34ff987f30f5bc5e5af16f5eb/pylibjpeg_libjpeg-2.3.0-cp313-cp313-win32.whl", hash = "sha256:ec974e854f220714d70e51ee02c832bbdb04bba41007fb962b209622560157fe", size = 729881, upload_time = "2024-10-27T02:36:07.849Z" },
+    { url = "https://files.pythonhosted.org/packages/f4/b4/8606414416b01233f30f99d69ed1840d8ffa3e04ffc2b73a026fbada87a2/pylibjpeg_libjpeg-2.3.0-cp313-cp313-win_amd64.whl", hash = "sha256:0b8469237b9b0600cff7af4cf570689667b0e542e10ed9d5a2defe6355a84e60", size = 743805, upload_time = "2024-10-27T02:36:09.259Z" },
+]
+
+[[package]]
+name = "pylibjpeg-openjpeg"
+version = "2.4.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "numpy" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/93/3b/18da1b72d215af4ce611390a35f378f7355fbcfee864e386b232b6caf7fb/pylibjpeg_openjpeg-2.4.0.tar.gz", hash = "sha256:727eee1ba8fc698c102ac4d8f43a01de7133c57646b01a87307e8dc8dcb4c40f", size = 1912870, upload_time = "2024-10-28T22:54:05.485Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/b2/5c/ea0aef0fd4964fb92e3025775a7d1ab9e076138fec0b4c061e6d0e634aad/pylibjpeg_openjpeg-2.4.0-cp312-cp312-macosx_10_13_x86_64.whl", hash = "sha256:4a35ef20c0c3541095e7d94e7fafc795718c5e28f6d27841e6154e0b0519f6d2", size = 306119, upload_time = "2024-10-28T22:53:43.821Z" },
+    { url = "https://files.pythonhosted.org/packages/2a/6b/581cda03a1e328d77ffa3440af9da7aa33b297ed49474e74ff43886e02b8/pylibjpeg_openjpeg-2.4.0-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:b42ea41fc4002624d55d421d26e0094fbeb35c0a6119ca0f61983f277cbc3285", size = 269124, upload_time = "2024-10-28T22:53:44.958Z" },
+    { url = "https://files.pythonhosted.org/packages/b4/d1/175158b5c702e0108c54fdedfbfd461ec8dbadac6217ee2a2441a4b7a12d/pylibjpeg_openjpeg-2.4.0-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:ec316b7ef32c0300254ca87a50ad934d953f33b19db258638421260119269348", size = 1148085, upload_time = "2024-10-28T22:53:45.999Z" },
+    { url = "https://files.pythonhosted.org/packages/b7/d1/490d5b8e43d50d8c988bd5b63604b35974b671a0068b773b48c0db2f7372/pylibjpeg_openjpeg-2.4.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:423bb1ddb7237d2ff2bf8a231a22ce3a28e4d5375c9e714baa14df34521862da", size = 1205058, upload_time = "2024-10-28T22:53:47.304Z" },
+    { url = "https://files.pythonhosted.org/packages/54/73/772949f88d3c88d5cdccd3a89dabeb7edfd5dc82f70d99e5caacffe48fb5/pylibjpeg_openjpeg-2.4.0-cp312-cp312-win32.whl", hash = "sha256:fc0302de682958d0b666892f362128ff87246d2816eac5a7841b46673e06e249", size = 215627, upload_time = "2024-10-28T22:53:48.538Z" },
+    { url = "https://files.pythonhosted.org/packages/c4/5c/0317ad316723cffb476077e9b841ec9b2062364b04153f3bf1ce1a230eb1/pylibjpeg_openjpeg-2.4.0-cp312-cp312-win_amd64.whl", hash = "sha256:ae5d57716fc8e397aec3af80183bfd2896f54bf0455a1d38c0839a0b5e24feaf", size = 239064, upload_time = "2024-10-28T22:53:49.693Z" },
+    { url = "https://files.pythonhosted.org/packages/9b/6a/368230e433b99fe7c329b5dccfc4d5a5a95afef1fa40813900a8bf16f439/pylibjpeg_openjpeg-2.4.0-cp313-cp313-macosx_10_13_x86_64.whl", hash = "sha256:63bf4cbe52fe48d4aeadadf7f0f391c41bc819c030e2b7c5d342e9efadc4b33b", size = 305516, upload_time = "2024-10-28T22:53:50.752Z" },
+    { url = "https://files.pythonhosted.org/packages/79/54/60e535375c01c74ac2ab75c76e146725616dfee77702f97e7d32e11549e4/pylibjpeg_openjpeg-2.4.0-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:d9b413302d19cdd487ea6674681c6bdb78aaa25f20b417570b839d453387ddaf", size = 268459, upload_time = "2024-10-28T22:53:51.827Z" },
+    { url = "https://files.pythonhosted.org/packages/ad/e4/f43993a5f4041777939f53e763246f2e7c097979fbca376f73e02b6694a7/pylibjpeg_openjpeg-2.4.0-cp313-cp313-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:fcee9bea6371d7ff6351a56c2d5ca2eb0c83d2c28d5cc65ea2d69059e175c5bd", size = 1141675, upload_time = "2024-10-28T22:53:52.996Z" },
+    { url = "https://files.pythonhosted.org/packages/ac/72/43271558f94f7d8a1ee61911ba3a01038c79782c08c637ea946666d1ec32/pylibjpeg_openjpeg-2.4.0-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:0f28a9caf88acf3d7c91b216d5447709e4867c59d683f1efe04caf68b3642993", size = 1198239, upload_time = "2024-10-28T22:53:54.27Z" },
+    { url = "https://files.pythonhosted.org/packages/96/2c/7cca02102ecfb0227f2ffd7d3f1419a4b7a4fd409063df337c7f046e39e1/pylibjpeg_openjpeg-2.4.0-cp313-cp313-win32.whl", hash = "sha256:91ba44272e0644203f6d16d6534a05430b9262e5fad95c942c5fbef0873c0b96", size = 215407, upload_time = "2024-10-28T22:53:55.509Z" },
+    { url = "https://files.pythonhosted.org/packages/69/7b/2aba91724fcc9fb34abfaa8537f7698934297b527986b7d239691ed01d9a/pylibjpeg_openjpeg-2.4.0-cp313-cp313-win_amd64.whl", hash = "sha256:8ab188bc25f9a40369b40f634d401ee53cde63167a171969bfb1ceeee7a4e16c", size = 238829, upload_time = "2024-10-28T22:53:56.639Z" },
 ]
 
 [[package]]

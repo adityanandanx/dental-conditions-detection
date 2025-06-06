@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     # File upload settings
     max_file_size: int = 10 * 1024 * 1024  # 10MB
     allowed_file_types: list = ["image/jpeg", "image/png", "image/jpg"]
+    allowed_dicom_file_types: list = ["application/dicom", "application/octet-stream"]
 
     model_config = SettingsConfigDict(env_file=".env")
 
