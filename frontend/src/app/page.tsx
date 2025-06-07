@@ -18,7 +18,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col w-full">
+    <div className="min-h-screen flex flex-col w-full max-w-screen-2xl mx-auto">
       <Nav />
       <main className="flex-1 flex flex-col lg:flex-row">
         <div className="w-full lg:w-96 xl:w-[28rem] p-4 sm:p-6 lg:p-10">

@@ -1,15 +1,5 @@
 import { create } from "zustand";
-
-// Type for the converted DICOM data
-export interface ConvertedDicomData {
-  id: string;
-  dataUrl: string;
-  width: number;
-  height: number;
-  originalFile: File;
-  fileName: string;
-  fileSize: number;
-}
+import { ConvertedDicomData } from "./types";
 
 interface DroppedFilesState {
   files: ConvertedDicomData[];

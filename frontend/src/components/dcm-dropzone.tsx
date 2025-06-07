@@ -14,9 +14,14 @@ import { CloudUploadIcon, Trash2Icon } from "lucide-react";
 import { convertDicomToImageUrl } from "@/lib/utils";
 import { ImagePreview } from "./image-preview";
 import { Button } from "./ui/button";
-import { useDroppedFilesStore, ConvertedDicomData } from "@/lib/store";
+import { useDroppedFilesStore } from "@/lib/store";
 import { UseMutationResult } from "@tanstack/react-query";
-import { DicomDetectionResult } from "@/hooks/use-dicom-detection";
+import { ConvertedDicomData, DicomDetectionResult } from "@/lib/types";
+import {
+  FILE_SIZE_LIMITS,
+  SUPPORTED_DICOM_EXTENSIONS,
+  formatFileSize,
+} from "@/lib/constants";
 
 interface DCMDropzoneProps {
   dicomDetectionMutation: UseMutationResult<
@@ -64,10 +69,8 @@ export function DCMDropzone({
       }
     },
     validation: {
-      accept: {
-        "application/dicom": [".dcm", ".rvg"],
-      },
-      maxSize: 10 * 1024 * 1024, // 10 MB
+      accept: SUPPORTED_DICOM_EXTENSIONS,
+      maxSize: FILE_SIZE_LIMITS.MAX_SIZE,
     },
   });
 
@@ -140,7 +143,7 @@ export function DCMDropzone({
                     {file.fileName}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    {(file.file.size / (1024 * 1024)).toFixed(2)} MB
+                    {formatFileSize(file.file.size)}
                   </p>
                 </div>
                 <DropzoneRemoveFile

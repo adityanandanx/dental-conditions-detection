@@ -3,17 +3,8 @@ import Image from "next/image";
 import { useState, useRef, useEffect, useCallback } from "react";
 import { Badge } from "./ui/badge";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
-
-interface Detection {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  confidence: number;
-  class: string;
-  class_id: number;
-  detection_id: string;
-}
+import { Detection } from "@/lib/types";
+import { formatFileSize } from "@/lib/constants";
 
 interface DetectionImagePreviewProps {
   src: string;
@@ -50,15 +41,6 @@ export function DetectionImagePreview({
   fileSize,
   detections = [],
 }: DetectionImagePreviewProps) {
-  // Convert bytes to a readable format
-  const formatFileSize = (bytes: number): string => {
-    if (bytes === 0) return "0 Bytes";
-    const k = 1024;
-    const sizes = ["Bytes", "KB", "MB", "GB"];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
-  };
-
   // Calculate aspect ratio for proper scaling
   const aspectRatio = width / height;
   const containerRef = useRef<HTMLDivElement>(null);

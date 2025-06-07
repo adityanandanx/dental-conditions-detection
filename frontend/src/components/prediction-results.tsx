@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { DicomDetectionResult } from "@/hooks/use-dicom-detection";
+import { DicomDetectionResult } from "@/lib/types";
 import { DetectionImagePreview } from "./detection-image-preview";
 import { useDroppedFilesStore } from "@/lib/store";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";

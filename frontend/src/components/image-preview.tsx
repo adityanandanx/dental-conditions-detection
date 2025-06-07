@@ -1,4 +1,6 @@
+"use client";
 import Image from "next/image";
+import { formatFileSize } from "@/lib/constants";
 import {
   Dialog,
   DialogClose,
@@ -43,7 +45,7 @@ export function ImagePreview({
         <DialogHeader>
           <DialogTitle>{fileName}</DialogTitle>
           <DialogDescription>
-            {(fileSize / (1024 * 1024)).toFixed(2)} MB • {width} × {height}
+            {width} × {height} • {formatFileSize(fileSize)}
           </DialogDescription>
         </DialogHeader>
         <Image
