@@ -66,3 +66,19 @@ export interface ConvertedDicomData {
   fileName: string;
   fileSize: number;
 }
+
+// Types for individual file detection states
+export interface FileDetectionState {
+  fileId: string;
+  fileName: string;
+  status: "pending" | "loading" | "success" | "error";
+  result?: DicomDetectionResult;
+  error?: Error;
+}
+
+export interface DetectionProgress {
+  files: FileDetectionState[];
+  isAllComplete: boolean;
+  hasAnyResults: boolean;
+  hasAnyErrors: boolean;
+}

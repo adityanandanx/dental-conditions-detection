@@ -17,6 +17,9 @@ export default function Home() {
     dicomDetectionMutation.mutate({ files });
   };
 
+  const { detectionProgress } = dicomDetectionMutation;
+  const hasAnyActivity = detectionProgress.files.length > 0;
+
   return (
     <div className="min-h-screen flex flex-col w-full max-w-screen-2xl mx-auto">
       <Nav />
@@ -33,48 +36,17 @@ export default function Home() {
             Diagnostic Report
           </h1>
 
-          {!dicomDetectionMutation.data &&
-            !dicomDetectionMutation.isError &&
-            !dicomDetectionMutation.isPending && (
-              <p className="text-sm sm:text-base text-muted-foreground">
-                The diagnostic report will be generated based on the uploaded
-                X-ray image. Please upload an image and click
-                &apos;Predict&apos; to generate the report.
-              </p>
-            )}
-
-          {dicomDetectionMutation.isPending && (
-            <div className="flex items-center gap-2">
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
-              <p className="text-sm sm:text-base">Analyzing DICOM files...</p>
-            </div>
+          {!hasAnyActivity && (
+            <p className="text-sm sm:text-base text-muted-foreground">
+              The diagnostic report will be generated based on the uploaded
+              X-ray image. Please upload an image and click &apos;Predict&apos;
+              to generate the report.
+            </p>
           )}
 
-          {dicomDetectionMutation.isError && (
-            <div className="p-3 sm:p-4 bg-red-50 border border-red-200 rounded-md">
-              <p className="text-red-700 text-sm font-medium">
-                Analysis Failed:
-              </p>
-              <p className="text-red-600 text-sm">
-                {dicomDetectionMutation.error instanceof Error
-                  ? dicomDetectionMutation.error.message
-                  : "An unexpected error occurred during detection"}
-              </p>
-              <Button
-                variant="outline"
-                size="sm"
-                className="mt-2"
-                onClick={() => dicomDetectionMutation.reset()}
-              >
-                Try Again
-              </Button>
-            </div>
+          {hasAnyActivity && (
+            <PredictionResults detectionProgress={detectionProgress} />
           )}
-
-          {dicomDetectionMutation.data &&
-            dicomDetectionMutation.data.length > 0 && (
-              <PredictionResults results={dicomDetectionMutation.data} />
-            )}
         </div>
       </main>
     </div>
