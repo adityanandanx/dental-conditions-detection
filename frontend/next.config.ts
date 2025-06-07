@@ -1,7 +1,11 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  output: "standalone",
+  // Disable telemetry for production builds
+  experimental: {
+    serverComponentsExternalPackages: ["dcmjs-imaging"],
+  },
 };
 
 export default nextConfig;
