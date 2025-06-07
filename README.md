@@ -29,6 +29,7 @@ _An AI-powered platform for detecting dental conditions in X-ray images using co
 - [🚀 Setup & Installation](#-setup--installation)
 - [🏃‍♂️ Running the Application](#️-running-the-application)
 - [📚 API Documentation](#-api-documentation)
+- [🐳 Docker Deployment](#-docker-deployment)
 - [📁 Project Structure](#-project-structure)
 - [⚙️ Environment Configuration](#️-environment-configuration)
 - [🔧 Development](#-development)
@@ -285,6 +286,65 @@ Process DICOM files with metadata extraction and condition detection.
 
 Health check endpoint for monitoring.
 
+## 🐳 Docker Deployment
+
+### Quick Start
+
+```bash
+# Copy environment file and add your Roboflow API key
+echo "ROBOFLOW_API_KEY=your_api_key_here" > .env
+
+# Start production environment
+make quick-start
+# or
+docker compose build && docker compose up -d
+```
+
+**Access**: Frontend at http://localhost:3000, Backend at http://localhost:8000
+
+### Development with Docker
+
+```bash
+# Copy environment file and add your Roboflow API key
+echo "ROBOFLOW_API_KEY=your_api_key_here" > .env
+
+# Start development with hot reload and file watching
+make dev
+# or
+docker compose build && docker compose -f docker-compose.dev.yml up --build
+
+# Or use Docker Compose watch (requires v2.22+)
+make watch
+# or
+docker compose -f docker-compose.dev.yml watch
+```
+
+### Architecture Features
+
+- **Multi-stage builds**: Optimized images with builder and production stages
+- **Health checks**: Built-in health monitoring for both services
+- **Volume caching**: Persistent volumes for dependencies and build cache
+- **Security**: Non-root users in production containers
+- **Development workflow**: File watching with automatic rebuilds
+
+### Available Commands
+
+```bash
+make help           # Show all available commands
+make dev           # Development with hot reload
+make up            # Production deployment
+make logs          # View service logs
+make health        # Check service health
+make clean         # Clean up containers and volumes
+```
+
+### Container Specifications
+
+- **Backend**: Python 3.12-slim with medical imaging libraries (pydicom, OpenCV) utilizing uv package manager
+- **Frontend**: Node.js 20-slim with pnpm package manager
+- **Volumes**: Cached dependencies and build artifacts for faster rebuilds
+- **Networking**: Internal service communication with external port exposure
+
 ## 📁 Project Structure
 
 ```
@@ -300,7 +360,15 @@ dobbe/
 │   │   ├── hooks/            # Custom React hooks
 │   │   └── lib/              # Utilities and configurations
 │   ├── public/               # Static assets
-│   └── package.json
+│   ├── Dockerfile            # Frontend Docker configuration
+│   ├── package.json          # Node.js dependencies
+│   ├── pnpm-lock.yaml        # pnpm lock file
+│   ├── next.config.ts        # Next.js configuration
+│   ├── tsconfig.json         # TypeScript configuration
+│   ├── eslint.config.mjs     # ESLint configuration
+│   ├── postcss.config.mjs    # PostCSS configuration
+│   ├── components.json       # shadcn/ui configuration
+│   └── .env.example          # Environment variables template
 │
 ├── backend/                   # FastAPI backend application
 │   ├── app/
@@ -309,10 +377,18 @@ dobbe/
 │   │   ├── models/           # Pydantic data models
 │   │   ├── services/         # Business logic services
 │   │   └── dependencies/     # Shared dependencies
-│   ├── pyproject.toml        # Python dependencies
-│   └── uv.lock              # UV lock file
+│   ├── Dockerfile            # Backend Docker configuration
+│   ├── pyproject.toml        # Python dependencies and project config
+│   ├── uv.lock              # UV lock file
+│   └── .env.example          # Environment variables template
 │
-└── README.md                 # This file
+├── docker-compose.yml        # Production Docker Compose
+├── docker-compose.dev.yml    # Development Docker Compose
+├── Makefile                  # Build and development commands
+├── logo.svg                  # Project logo
+├── README.md                 # Project documentation
+├── .env.example              # Global environment variables template
+└── .gitignore               # Git ignore patterns
 ```
 
 ## ⚙️ Environment Configuration
