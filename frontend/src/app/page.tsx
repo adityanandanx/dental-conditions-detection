@@ -1,7 +1,7 @@
 "use client";
-import { DCMDropzone } from "@/components/dcm-dropzone";
+import { DicomDropzone } from "@/components/dicom/dicom-dropzone";
 import Nav from "@/components/nav";
-import { PredictionResults } from "@/components/prediction-results";
+import { PredictionResults } from "@/components/results/prediction-results";
 import { useDicomDetection } from "@/hooks/use-dicom-detection";
 import { useDroppedFilesStore } from "@/lib/store";
 
@@ -25,7 +25,7 @@ export default function Home() {
       <main className="flex-1 flex flex-col lg:flex-row">
         <div className="w-full lg:w-96 xl:w-[28rem] p-4 sm:p-6 lg:p-10">
           <h1 className="text-xl sm:text-2xl font-bold mb-4">X-Ray Image</h1>
-          <DCMDropzone
+          <DicomDropzone
             dicomDetectionMutation={dicomDetectionMutation}
             onPredict={handlePredict}
           />

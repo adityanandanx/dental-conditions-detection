@@ -4,26 +4,20 @@ import {
   DropZoneArea,
   DropzoneDescription,
   DropzoneFileList,
-  DropzoneFileListItem,
   DropzoneMessage,
-  DropzoneRemoveFile,
   DropzoneTrigger,
   useDropzone,
 } from "@/components/ui/dropzone";
-import { CloudUploadIcon, Trash2Icon } from "lucide-react";
+import { CloudUploadIcon } from "lucide-react";
 import { convertDicomToImageUrl } from "@/lib/utils";
-import { ImagePreview } from "./image-preview";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import { useDroppedFilesStore } from "@/lib/store";
 import { UseMutationResult } from "@tanstack/react-query";
 import { ConvertedDicomData, DicomDetectionResult } from "@/lib/types";
-import {
-  FILE_SIZE_LIMITS,
-  SUPPORTED_DICOM_EXTENSIONS,
-  formatFileSize,
-} from "@/lib/constants";
+import { FILE_SIZE_LIMITS, SUPPORTED_DICOM_EXTENSIONS } from "@/lib/constants";
+import { DicomFileItem } from "./dicom-file-item";
 
-interface DCMDropzoneProps {
+interface DicomDropzoneProps {
   dicomDetectionMutation: UseMutationResult<
     DicomDetectionResult[],
     Error,
@@ -33,10 +27,10 @@ interface DCMDropzoneProps {
   onPredict: () => void;
 }
 
-export function DCMDropzone({
+export function DicomDropzone({
   dicomDetectionMutation,
   onPredict,
-}: DCMDropzoneProps) {
+}: DicomDropzoneProps) {
   const { files, addFile, removeFile } = useDroppedFilesStore();
 
   const dropzone = useDropzone({
@@ -109,56 +103,11 @@ export function DCMDropzone({
 
         <DropzoneFileList className="gap-2 sm:gap-3 p-0 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-2">
           {dropzone.fileStatuses.map((file) => (
-            <DropzoneFileListItem
-              className="overflow-hidden rounded-md bg-secondary p-0 shadow-sm"
+            <DicomFileItem
               key={file.id}
               file={file}
-            >
-              {file.status === "pending" && (
-                <div className="aspect-video animate-pulse bg-black/20" />
-              )}
-              {file.status === "success" && (
-                <ImagePreview
-                  src={file.result.dataUrl}
-                  alt={`DICOM preview - ${file.fileName}`}
-                  width={file.result.width}
-                  height={file.result.height}
-                  fileName={file.fileName}
-                  fileSize={file.file.size}
-                />
-              )}
-              {file.status === "error" && (
-                <div className="aspect-video flex items-center justify-center bg-red-50 text-red-500">
-                  <div className="text-center p-2">
-                    <p className="text-xs sm:text-sm">
-                      Failed to convert DICOM
-                    </p>
-                    <p className="text-xs text-red-400">{file.error}</p>
-                  </div>
-                </div>
-              )}
-              <div className="flex items-center justify-between p-2 sm:p-3 pl-3 sm:pl-4">
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-xs sm:text-sm font-medium">
-                    {file.fileName}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    {formatFileSize(file.file.size)}
-                  </p>
-                </div>
-                <DropzoneRemoveFile
-                  variant="ghost"
-                  size="sm"
-                  className="shrink-0 hover:outline ml-2"
-                  onClick={() =>
-                    file.status === "success" &&
-                    handleRemoveFile(file.result.id, file.id)
-                  }
-                >
-                  <Trash2Icon className="size-3 sm:size-4" />
-                </DropzoneRemoveFile>
-              </div>
-            </DropzoneFileListItem>
+              onRemove={handleRemoveFile}
+            />
           ))}
         </DropzoneFileList>
       </Dropzone>
@@ -166,7 +115,7 @@ export function DCMDropzone({
       <div className="flex flex-col sm:flex-row gap-2">
         <Button
           size="lg"
-          className="w-full sm:w-auto"
+          className="w-full sm:w-auto sm:flex-1"
           disabled={files.length === 0 || dicomDetectionMutation.isPending}
           onClick={onPredict}
         >
@@ -180,7 +129,7 @@ export function DCMDropzone({
             <Button
               variant="outline"
               size="lg"
-              className="w-full sm:w-auto"
+              className="w-full sm:w-auto sm:flex-1"
               onClick={() => dicomDetectionMutation.reset()}
             >
               Clear Results
