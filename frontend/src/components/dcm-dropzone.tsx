@@ -80,21 +80,23 @@ export function DCMDropzone({
   };
 
   return (
-    <div className="not-prose flex flex-col gap-4">
+    <div className="not-prose flex flex-col gap-3 sm:gap-4">
       <Dropzone {...dropzone}>
         <div className="">
           <div className="flex flex-col">
-            <DropzoneDescription>
+            <DropzoneDescription className="text-sm sm:text-base">
               Please select DICOM (.dcm/.rvg) files you want to analyse
             </DropzoneDescription>
             <DropzoneMessage />
           </div>
-          <DropZoneArea className=" border-dashed border-muted-foreground rounded-md">
-            <DropzoneTrigger className="flex flex-col items-center gap-4 bg-transparent w-full h-full text-center text-sm">
-              <CloudUploadIcon className="size-8" />
+          <DropZoneArea className="border-dashed border-muted-foreground rounded-md min-h-32 sm:min-h-40">
+            <DropzoneTrigger className="flex flex-col items-center gap-3 sm:gap-4 bg-transparent w-full h-full text-center text-sm">
+              <CloudUploadIcon className="size-6 sm:size-8" />
               <div>
-                <p className="font-semibold">Upload DICOM files</p>
-                <p className="text-sm text-muted-foreground">
+                <p className="font-semibold text-sm sm:text-base">
+                  Upload DICOM files
+                </p>
+                <p className="text-xs sm:text-sm text-muted-foreground">
                   Click here or drag and drop to upload
                 </p>
               </div>
@@ -102,7 +104,7 @@ export function DCMDropzone({
           </DropZoneArea>
         </div>
 
-        <DropzoneFileList className="gap-3 p-0 grid grid-cols-2">
+        <DropzoneFileList className="gap-2 sm:gap-3 p-0 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-2">
           {dropzone.fileStatuses.map((file) => (
             <DropzoneFileListItem
               className="overflow-hidden rounded-md bg-secondary p-0 shadow-sm"
@@ -124,28 +126,33 @@ export function DCMDropzone({
               )}
               {file.status === "error" && (
                 <div className="aspect-video flex items-center justify-center bg-red-50 text-red-500">
-                  <div className="text-center">
-                    <p className="text-sm">Failed to convert DICOM</p>
-                    <p className="text-xs">{file.error}</p>
+                  <div className="text-center p-2">
+                    <p className="text-xs sm:text-sm">
+                      Failed to convert DICOM
+                    </p>
+                    <p className="text-xs text-red-400">{file.error}</p>
                   </div>
                 </div>
               )}
-              <div className="flex items-center justify-between p-2 pl-4">
-                <div className="min-w-0">
-                  <p className="truncate text-sm">{file.fileName}</p>
+              <div className="flex items-center justify-between p-2 sm:p-3 pl-3 sm:pl-4">
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-xs sm:text-sm font-medium">
+                    {file.fileName}
+                  </p>
                   <p className="text-xs text-muted-foreground">
                     {(file.file.size / (1024 * 1024)).toFixed(2)} MB
                   </p>
                 </div>
                 <DropzoneRemoveFile
                   variant="ghost"
-                  className="shrink-0 hover:outline"
+                  size="sm"
+                  className="shrink-0 hover:outline ml-2"
                   onClick={() =>
                     file.status === "success" &&
                     handleRemoveFile(file.result.id, file.id)
                   }
                 >
-                  <Trash2Icon className="size-4" />
+                  <Trash2Icon className="size-3 sm:size-4" />
                 </DropzoneRemoveFile>
               </div>
             </DropzoneFileListItem>
@@ -153,9 +160,10 @@ export function DCMDropzone({
         </DropzoneFileList>
       </Dropzone>
 
-      <div className="flex gap-2">
+      <div className="flex flex-col sm:flex-row gap-2">
         <Button
-          size={"lg"}
+          size="lg"
+          className="w-full sm:w-auto"
           disabled={files.length === 0 || dicomDetectionMutation.isPending}
           onClick={onPredict}
         >
@@ -168,7 +176,8 @@ export function DCMDropzone({
           dicomDetectionMutation.data.length > 0 && (
             <Button
               variant="outline"
-              size={"lg"}
+              size="lg"
+              className="w-full sm:w-auto"
               onClick={() => dicomDetectionMutation.reset()}
             >
               Clear Results

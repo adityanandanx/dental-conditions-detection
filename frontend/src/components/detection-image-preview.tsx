@@ -87,10 +87,10 @@ export function DetectionImagePreview({
 
   return (
     <div className="w-full" ref={containerRef}>
-      <div className="space-y-4">
+      <div className="space-y-3 sm:space-y-4">
         {/* Image with all bounding boxes */}
         <div
-          className="relative"
+          className="relative mx-auto"
           style={{ width: displayWidth, height: displayHeight }}
         >
           <Image
@@ -98,7 +98,7 @@ export function DetectionImagePreview({
             alt={alt}
             width={displayWidth}
             height={displayHeight}
-            className="object-contain"
+            className="object-contain rounded-md"
             style={{ width: displayWidth, height: displayHeight }}
             priority
           />
@@ -133,11 +133,12 @@ export function DetectionImagePreview({
         </div>
 
         {/* Metadata section */}
-        <div className="space-y-4">
+        <div className="space-y-3 sm:space-y-4">
           {/* Detection details list */}
           {detections.length > 0 && (
             <div className="space-y-2">
-              <div className="flex flex-wrap gap-2 max-h-60 overflow-y-auto pr-2">
+              <h4 className="text-sm font-medium">Detections</h4>
+              <div className="flex flex-wrap gap-1.5 sm:gap-2 max-h-40 sm:max-h-60 overflow-y-auto pr-2">
                 {detections.map((detection) => {
                   const boxColor = getDetectionColor(detection.class_id);
                   return (
@@ -148,6 +149,7 @@ export function DetectionImagePreview({
                             borderColor: boxColor,
                           }}
                           variant={"outline"}
+                          className="text-xs sm:text-sm"
                         >
                           {detection.class}
                           <span className="ml-1 text-muted-foreground">
@@ -156,7 +158,7 @@ export function DetectionImagePreview({
                         </Badge>
                       </TooltipTrigger>
                       <TooltipContent className="" align="start" side="bottom">
-                        <div className="grid grid-cols-2 gap-x-2 gap-y-1">
+                        <div className="grid grid-cols-2 gap-x-2 gap-y-1 text-xs">
                           <span className="text-background/80">
                             Confidence:
                           </span>
@@ -188,19 +190,27 @@ export function DetectionImagePreview({
           {/* Image metadata */}
           <div className="space-y-2">
             <h4 className="text-sm font-medium">Image Metadata</h4>
-            <div className="grid grid-cols-2 gap-2 text-xs">
-              <span className="text-muted-foreground">File Name:</span>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 text-xs sm:text-sm">
+              <span className="text-muted-foreground font-medium">
+                File Name:
+              </span>
               <span className="truncate">{fileName}</span>
 
-              <span className="text-muted-foreground">Dimensions:</span>
+              <span className="text-muted-foreground font-medium">
+                Dimensions:
+              </span>
               <span>
                 {width}×{height}px
               </span>
 
-              <span className="text-muted-foreground">File Size:</span>
+              <span className="text-muted-foreground font-medium">
+                File Size:
+              </span>
               <span>{formatFileSize(fileSize)}</span>
 
-              <span className="text-muted-foreground">Detection Count:</span>
+              <span className="text-muted-foreground font-medium">
+                Detection Count:
+              </span>
               <span>{detections.length}</span>
             </div>
           </div>

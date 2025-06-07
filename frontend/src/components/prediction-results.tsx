@@ -28,17 +28,25 @@ export function PredictionResults({ results }: PredictionResultsProps) {
   const defaultTab = results.length > 0 ? results[0].fileId : "";
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold">Prediction Results</h3>
+    <div className="space-y-4 sm:space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+        <h3 className="text-base sm:text-lg font-semibold">
+          Prediction Results
+        </h3>
         <Badge variant="secondary">{results.length} file(s) analyzed</Badge>
       </div>
 
       <Tabs defaultValue={defaultTab} className="w-full">
-        <TabsList className="mb-4 w-full overflow-x-auto">
+        <TabsList className="mb-4 w-full overflow-x-auto flex-nowrap justify-start">
           {results.map((result) => (
-            <TabsTrigger key={result.fileId} value={result.fileId}>
-              {result.fileName}
+            <TabsTrigger
+              key={result.fileId}
+              value={result.fileId}
+              className="whitespace-nowrap text-xs sm:text-sm"
+            >
+              <span className="truncate max-w-24 sm:max-w-none">
+                {result.fileName}
+              </span>
             </TabsTrigger>
           ))}
         </TabsList>
@@ -50,13 +58,15 @@ export function PredictionResults({ results }: PredictionResultsProps) {
           return (
             <TabsContent key={result.fileId} value={result.fileId}>
               <Card className="w-full">
-                <CardHeader>
-                  <CardTitle>File: {result.fileName}</CardTitle>
+                <CardHeader className="pb-3 sm:pb-6">
+                  <CardTitle className="text-base sm:text-lg truncate">
+                    File: {result.fileName}
+                  </CardTitle>
                   <CardDescription>
                     Detections: {result.predictions.length}
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent className="space-y-3 sm:space-y-4">
                   {/* Image with Detection Visualization in Tabs */}
                   {fileData && (
                     <DetectionImagePreview
@@ -75,28 +85,30 @@ export function PredictionResults({ results }: PredictionResultsProps) {
                   {/* DICOM Metadata */}
                   <div>
                     <h4 className="text-sm font-medium mb-2">DICOM Metadata</h4>
-                    <div className="grid grid-cols-2 gap-2 text-xs">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 text-xs sm:text-sm">
                       {result.metadata.patient_name && (
                         <>
-                          <span className="text-muted-foreground">
+                          <span className="text-muted-foreground font-medium">
                             Patient:
                           </span>
-                          <span>{result.metadata.patient_name}</span>
+                          <span className="break-words">
+                            {result.metadata.patient_name}
+                          </span>
                         </>
                       )}
                       {result.metadata.patient_id && (
                         <>
-                          <span className="text-muted-foreground">
+                          <span className="text-muted-foreground font-medium">
                             Patient ID:
                           </span>
-                          <span className="truncate">
+                          <span className="break-all">
                             {result.metadata.patient_id}
                           </span>
                         </>
                       )}
                       {result.metadata.modality && (
                         <>
-                          <span className="text-muted-foreground">
+                          <span className="text-muted-foreground font-medium">
                             Modality:
                           </span>
                           <span>{result.metadata.modality}</span>
@@ -104,7 +116,7 @@ export function PredictionResults({ results }: PredictionResultsProps) {
                       )}
                       {result.metadata.study_date && (
                         <>
-                          <span className="text-muted-foreground">
+                          <span className="text-muted-foreground font-medium">
                             Study Date:
                           </span>
                           <span>{result.metadata.study_date}</span>
@@ -112,15 +124,17 @@ export function PredictionResults({ results }: PredictionResultsProps) {
                       )}
                       {result.metadata.manufacturer && (
                         <>
-                          <span className="text-muted-foreground">
+                          <span className="text-muted-foreground font-medium">
                             Manufacturer:
                           </span>
-                          <span>{result.metadata.manufacturer}</span>
+                          <span className="break-words">
+                            {result.metadata.manufacturer}
+                          </span>
                         </>
                       )}
                       {result.metadata.rows && result.metadata.columns && (
                         <>
-                          <span className="text-muted-foreground">
+                          <span className="text-muted-foreground font-medium">
                             Dimensions:
                           </span>
                           <span>
@@ -138,23 +152,23 @@ export function PredictionResults({ results }: PredictionResultsProps) {
                     <h4 className="text-sm font-medium mb-2">
                       Image Information
                     </h4>
-                    <div className="grid grid-cols-2 gap-2 text-xs">
-                      <span className="text-muted-foreground">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 text-xs sm:text-sm">
+                      <span className="text-muted-foreground font-medium">
                         Original Shape:
                       </span>
                       <span>{result.image_info.original_shape.join("×")}</span>
 
-                      <span className="text-muted-foreground">
+                      <span className="text-muted-foreground font-medium">
                         Converted Format:
                       </span>
                       <span>{result.image_info.converted_format}</span>
 
-                      <span className="text-muted-foreground">
+                      <span className="text-muted-foreground font-medium">
                         Converted Size:
                       </span>
                       <span>{result.image_info.converted_size.join("×")}</span>
 
-                      <span className="text-muted-foreground">
+                      <span className="text-muted-foreground font-medium">
                         Pixel Range:
                       </span>
                       <span>

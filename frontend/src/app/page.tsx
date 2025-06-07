@@ -2,12 +2,9 @@
 import { DCMDropzone } from "@/components/dcm-dropzone";
 import Nav from "@/components/nav";
 import { PredictionResults } from "@/components/prediction-results";
-import {
-  useDicomDetection,
-  DicomDetectionResult,
-} from "@/hooks/use-dicom-detection";
-import { useDroppedFilesStore } from "@/lib/store";
 import { Button } from "@/components/ui/button";
+import { useDicomDetection } from "@/hooks/use-dicom-detection";
+import { useDroppedFilesStore } from "@/lib/store";
 
 export default function Home() {
   const { files } = useDroppedFilesStore();
@@ -21,23 +18,25 @@ export default function Home() {
   };
 
   return (
-    <div className="h-svh flex flex-col">
+    <div className="min-h-screen flex flex-col w-full">
       <Nav />
-      <main className="flex flex-1">
-        <div className="w-lg p-10">
-          <h1 className="text-2xl font-bold">X-Ray Image</h1>
+      <main className="flex-1 flex flex-col lg:flex-row">
+        <div className="w-full lg:w-96 xl:w-[28rem] p-4 sm:p-6 lg:p-10">
+          <h1 className="text-xl sm:text-2xl font-bold mb-4">X-Ray Image</h1>
           <DCMDropzone
             dicomDetectionMutation={dicomDetectionMutation}
             onPredict={handlePredict}
           />
         </div>
-        <div className="flex-1 p-10">
-          <h1 className="text-2xl font-bold mb-5">Diagnostic Report</h1>
+        <div className="flex-1 p-4 sm:p-6 lg:p-10">
+          <h1 className="text-xl sm:text-2xl font-bold mb-4 lg:mb-5">
+            Diagnostic Report
+          </h1>
 
           {!dicomDetectionMutation.data &&
             !dicomDetectionMutation.isError &&
             !dicomDetectionMutation.isPending && (
-              <p>
+              <p className="text-sm sm:text-base text-muted-foreground">
                 The diagnostic report will be generated based on the uploaded
                 X-ray image. Please upload an image and click
                 &apos;Predict&apos; to generate the report.
@@ -47,12 +46,12 @@ export default function Home() {
           {dicomDetectionMutation.isPending && (
             <div className="flex items-center gap-2">
               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
-              <p>Analyzing DICOM files...</p>
+              <p className="text-sm sm:text-base">Analyzing DICOM files...</p>
             </div>
           )}
 
           {dicomDetectionMutation.isError && (
-            <div className="p-4 bg-red-50 border border-red-200 rounded-md">
+            <div className="p-3 sm:p-4 bg-red-50 border border-red-200 rounded-md">
               <p className="text-red-700 text-sm font-medium">
                 Analysis Failed:
               </p>
