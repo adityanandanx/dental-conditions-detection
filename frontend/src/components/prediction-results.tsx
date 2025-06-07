@@ -12,8 +12,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useDroppedFilesStore } from "@/lib/store";
 import { DetectionProgress } from "@/lib/types";
-import { AlertCircle, CheckCircle, Clock } from "lucide-react";
+import { AlertCircle, CheckCircle, Clock, CopyIcon } from "lucide-react";
 import { DetectionImagePreview } from "./detection-image-preview";
+import { Button } from "./ui/button";
 
 interface PredictionResultsProps {
   detectionProgress: DetectionProgress;
@@ -92,7 +93,7 @@ export function PredictionResults({
           return (
             <TabsContent key={fileState.fileId} value={fileState.fileId}>
               <Card className="w-full">
-                <CardHeader className="pb-3 sm:pb-6">
+                <CardHeader>
                   <div className="flex items-center gap-2">
                     {getStatusIcon(fileState.status)}
                     <CardTitle className="text-base sm:text-lg truncate">
@@ -101,10 +102,17 @@ export function PredictionResults({
                   </div>
                   <CardDescription>
                     {fileState.status === "loading" && "Processing..."}
-                    {fileState.status === "success" &&
-                      `Detections: ${
-                        fileState.result?.predictions.length || 0
-                      }`}
+                    {fileState.status === "success" && (
+                      <div className="flex flex-col">
+                        <span>
+                          Detections:{" "}
+                          {fileState.result?.predictions.length || 0}
+                        </span>
+                        <span>
+                          Patient: {fileState.result?.metadata.patient_name}
+                        </span>
+                      </div>
+                    )}
                     {fileState.status === "error" &&
                       `Error: ${
                         fileState.error?.message || "Processing failed"
@@ -187,9 +195,24 @@ export function PredictionResults({
                               <span className="text-muted-foreground font-medium">
                                 Patient ID:
                               </span>
-                              <span className="break-all">
-                                {fileState.result.metadata.patient_id}
-                              </span>
+                              <div className="w-full flex items-center">
+                                <span className="truncate flex-1">
+                                  {fileState.result.metadata.patient_id}
+                                </span>
+                                <Button
+                                  variant={"secondary"}
+                                  size="sm"
+                                  className="cursor-pointer focus-within:text-muted-foreground"
+                                  onClick={() => {
+                                    if (fileState.result?.metadata.patient_id)
+                                      navigator.clipboard.writeText(
+                                        fileState.result.metadata.patient_id
+                                      );
+                                  }}
+                                >
+                                  <CopyIcon size={8} className="size-3" />
+                                </Button>
+                              </div>
                             </>
                           )}
                           {fileState.result.metadata.modality && (

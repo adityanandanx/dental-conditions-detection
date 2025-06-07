@@ -2,7 +2,6 @@
 import { DCMDropzone } from "@/components/dcm-dropzone";
 import Nav from "@/components/nav";
 import { PredictionResults } from "@/components/prediction-results";
-import { Button } from "@/components/ui/button";
 import { useDicomDetection } from "@/hooks/use-dicom-detection";
 import { useDroppedFilesStore } from "@/lib/store";
 
