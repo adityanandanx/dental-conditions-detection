@@ -15,8 +15,23 @@ import { convertDicomToImageUrl } from "@/lib/utils";
 import { ImagePreview } from "./image-preview";
 import { Button } from "./ui/button";
 import { useDroppedFilesStore, ConvertedDicomData } from "@/lib/store";
+import { UseMutationResult } from "@tanstack/react-query";
+import { DicomDetectionResult } from "@/hooks/use-dicom-detection";
 
-export function DCMDropzone() {
+interface DCMDropzoneProps {
+  dicomDetectionMutation: UseMutationResult<
+    DicomDetectionResult[],
+    Error,
+    { files: ConvertedDicomData[] },
+    unknown
+  >;
+  onPredict: () => void;
+}
+
+export function DCMDropzone({
+  dicomDetectionMutation,
+  onPredict,
+}: DCMDropzoneProps) {
   const { files, addFile, removeFile } = useDroppedFilesStore();
 
   const dropzone = useDropzone({
@@ -60,6 +75,8 @@ export function DCMDropzone() {
   const handleRemoveFile = (fileId: string, dropzoneFileId: string) => {
     removeFile(fileId);
     dropzone.onRemoveFile(dropzoneFileId);
+    // Reset mutation state when files change
+    dicomDetectionMutation.reset();
   };
 
   return (
@@ -136,9 +153,28 @@ export function DCMDropzone() {
         </DropzoneFileList>
       </Dropzone>
 
-      <Button size={"lg"} disabled={files.length === 0}>
-        Predict ({files.length} files)
-      </Button>
+      <div className="flex gap-2">
+        <Button
+          size={"lg"}
+          disabled={files.length === 0 || dicomDetectionMutation.isPending}
+          onClick={onPredict}
+        >
+          {dicomDetectionMutation.isPending
+            ? "Analyzing..."
+            : `Predict (${files.length} files)`}
+        </Button>
+
+        {dicomDetectionMutation.data &&
+          dicomDetectionMutation.data.length > 0 && (
+            <Button
+              variant="outline"
+              size={"lg"}
+              onClick={() => dicomDetectionMutation.reset()}
+            >
+              Clear Results
+            </Button>
+          )}
+      </div>
     </div>
   );
 }
