@@ -21,7 +21,7 @@ _An AI-powered platform for detecting dental conditions in X-ray images using co
 
 ## ▶️ Demo Video
 
-<video controls src="rec-2025-06-08 17-56-39.mp4" title="Screen recorded demo video for Dental X-Ray Analysis AI"></video>
+[![Watch the video](https://img.youtube.com/vi/diI3qsaASuo/0.jpg)](https://www.youtube.com/watch?v=diI3qsaASuo)
 
 ## 📋 Table of Contents
 
