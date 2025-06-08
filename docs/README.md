@@ -19,9 +19,11 @@ _An AI-powered platform for detecting dental conditions in X-ray images using co
 
 ---
 
-## ▶️ Demo Video
+## [▶️ Demo Video](https://www.youtube.com/watch?v=diI3qsaASuo)
 
 [![Watch the video](https://img.youtube.com/vi/diI3qsaASuo/0.jpg)](https://www.youtube.com/watch?v=diI3qsaASuo)
+
+[YouTube Link](https://www.youtube.com/watch?v=diI3qsaASuo)
 
 ## 📋 Table of Contents
 
