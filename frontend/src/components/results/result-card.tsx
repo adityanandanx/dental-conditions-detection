@@ -19,6 +19,7 @@ import {
   ConvertedDicomData,
   DiagnosticReport,
 } from "@/lib/types";
+import { formatFileSize } from "@/lib/constants";
 
 interface ResultCardProps {
   fileState: DetectionProgress["files"][0];
@@ -59,6 +60,15 @@ export function ResultCard({
               `Error: ${fileState.error?.message || "Processing failed"}`}
             {fileState.status === "pending" && "Waiting to process..."}
           </CardDescription>
+          {fileData && fileState.result && (
+            <DetectionImagePreview
+              src={fileData.dataUrl}
+              alt={`DICOM with detections - ${fileState.result.fileName}`}
+              width={fileData.width}
+              height={fileData.height}
+              detections={fileState.result.predictions}
+            />
+          )}
         </CardHeader>
         <CardContent className="space-y-3 sm:space-y-4">
           {fileState.status === "loading" && (
@@ -105,19 +115,34 @@ export function ResultCard({
               </TabsList>
 
               <TabsContent value="analysis" className="space-y-4 mt-4">
-                {/* Image with Detection Visualization */}
-                {fileData && (
-                  <DetectionImagePreview
-                    src={fileData.dataUrl}
-                    alt={`DICOM with detections - ${fileState.result.fileName}`}
-                    width={fileData.width}
-                    height={fileData.height}
-                    fileName={fileState.result.fileName}
-                    fileSize={fileData.fileSize}
-                    detections={fileState.result.predictions}
-                  />
-                )}
+                {fileData && fileState.result && (
+                  <div className="space-y-2">
+                    <h4 className="text-sm font-medium">Image Metadata</h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 text-xs sm:text-sm">
+                      <span className="text-muted-foreground font-medium">
+                        File Name:
+                      </span>
+                      <span className="truncate">{fileData.fileName}</span>
 
+                      <span className="text-muted-foreground font-medium">
+                        Dimensions:
+                      </span>
+                      <span>
+                        {fileData.width}×{fileData.height}px
+                      </span>
+
+                      <span className="text-muted-foreground font-medium">
+                        File Size:
+                      </span>
+                      <span>{formatFileSize(fileData.fileSize)}</span>
+
+                      <span className="text-muted-foreground font-medium">
+                        Detection Count:
+                      </span>
+                      <span>{fileState.result.predictions.length}</span>
+                    </div>
+                  </div>
+                )}
                 <Separator />
 
                 {/* DICOM Metadata */}

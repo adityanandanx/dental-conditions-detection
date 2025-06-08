@@ -1,18 +1,15 @@
 "use client";
-import Image from "next/image";
-import { useState, useRef, useEffect, useCallback } from "react";
 import { Detection } from "@/lib/types";
-import { formatFileSize } from "@/lib/constants";
-import { DetectionOverlay } from "./detection-overlay";
+import Image from "next/image";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { DetectionBadgeList } from "./detection-badge-list";
+import { DetectionOverlay } from "./detection-overlay";
 
 interface DetectionImagePreviewProps {
   src: string;
   alt: string;
   width: number;
   height: number;
-  fileName: string;
-  fileSize: number;
   detections?: Detection[];
 }
 
@@ -21,8 +18,6 @@ export function DetectionImagePreview({
   alt,
   width,
   height,
-  fileName,
-  fileSize,
   detections = [],
 }: DetectionImagePreviewProps) {
   // Calculate aspect ratio for proper scaling
@@ -83,7 +78,7 @@ export function DetectionImagePreview({
           <DetectionBadgeList detections={detections} />
 
           {/* Image metadata */}
-          <div className="space-y-2">
+          {/* <div className="space-y-2">
             <h4 className="text-sm font-medium">Image Metadata</h4>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 text-xs sm:text-sm">
               <span className="text-muted-foreground font-medium">
@@ -108,7 +103,7 @@ export function DetectionImagePreview({
               </span>
               <span>{detections.length}</span>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
