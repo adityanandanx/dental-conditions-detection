@@ -58,6 +58,14 @@ Dobbe is a modern web application that leverages artificial intelligence to anal
 - **Metadata Display**: Complete DICOM metadata presentation
 - **Export Capabilities**: Download results and reports
 
+### 🤖 AI-Powered Diagnostic Reports
+
+- **LangChain Integration**: Advanced natural language processing for medical reports
+- **Professional Medical Reports**: Structured diagnostic reports with clinical terminology
+- **Treatment Recommendations**: AI-generated treatment suggestions based on detections
+- **Severity Assessment**: Automated severity classification (low, moderate, high)
+- **OpenAI Integration**: Powered by GPT models for accurate medical analysis
+
 ## 🏗️ Architecture
 
 ```mermaid
@@ -282,6 +290,53 @@ Process DICOM files with metadata extraction and condition detection.
 }
 ```
 
+#### `POST /api/v1/generate-diagnostic-report`
+
+Generate comprehensive AI-powered diagnostic reports from dental image analysis using LangChain and OpenAI.
+
+**Request**: Multipart form with image file (DICOM or standard format)
+**Features**:
+
+- Processes both DICOM and standard image formats
+- Runs AI detection analysis
+- Generates professional medical reports using LangChain
+- Provides treatment recommendations and severity assessment
+
+**Response**: Complete diagnostic analysis with the following format:
+
+```json
+{
+  "diagnostic_report": {
+    "report": "Detailed professional diagnostic report text with medical terminology",
+    "summary": "Brief summary of key findings and conditions detected",
+    "recommendations": [
+      "Schedule follow-up appointment with endodontist",
+      "Consider root canal therapy for affected tooth",
+      "Monitor adjacent teeth for signs of decay progression"
+    ],
+    "severity_level": "moderate",
+    "generated_at": "2024-12-08T10:30:00Z"
+  },
+  "detections_used": [
+    {
+      "x": 346.5,
+      "y": 323.5,
+      "width": 107,
+      "height": 105,
+      "confidence": 0.839,
+      "class": "cavity",
+      "class_id": 0,
+      "detection_id": "uuid-string"
+    }
+  ],
+  "metadata": {
+    "patient_id": "12345",
+    "study_date": "20241208"
+    // ... additional DICOM metadata (if DICOM file)
+  }
+}
+```
+
 #### `GET /api/v1/health`
 
 Health check endpoint for monitoring.
@@ -395,11 +450,12 @@ dobbe/
 
 ### Required Environment Variables
 
-| Variable              | Description                    | Required | Default                        |
-| --------------------- | ------------------------------ | -------- | ------------------------------ |
-| `ROBOFLOW_API_KEY`    | API key for Roboflow inference | Yes      | -                              |
-| `DEBUG`               | Enable debug mode              | No       | `false`                        |
-| `NEXT_PUBLIC_API_URL` | Backend API URL                | No       | `http://localhost:8000/api/v1` |
+| Variable              | Description                           | Required | Default                        |
+| --------------------- | ------------------------------------- | -------- | ------------------------------ |
+| `ROBOFLOW_API_KEY`    | API key for Roboflow inference        | Yes      | -                              |
+| `OPENAI_API_KEY`      | OpenAI API key for diagnostic reports | Yes      | -                              |
+| `DEBUG`               | Enable debug mode                     | No       | `false`                        |
+| `NEXT_PUBLIC_API_URL` | Backend API URL                       | No       | `http://localhost:8000/api/v1` |
 
 ## 🔧 Development
 

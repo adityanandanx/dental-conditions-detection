@@ -8,11 +8,12 @@ import {
 } from "../ui/card";
 import { Separator } from "../ui/separator";
 import { Skeleton } from "../ui/skeleton";
-import { TabsContent } from "../ui/tabs";
+import { TabsContent, Tabs, TabsList, TabsTrigger } from "../ui/tabs";
 import { AlertCircle, Clock } from "lucide-react";
 import { DetectionImagePreview } from "../detection/detection-image-preview";
 import { DicomMetadata } from "../dicom/dicom-metadata";
 import { StatusIndicator } from "./status-indicator";
+import { DiagnosticReportComponent } from "./diagnostic-report";
 import { DetectionProgress, ConvertedDicomData } from "@/lib/types";
 
 interface ResultCardProps {
@@ -84,60 +85,77 @@ export function ResultCard({ fileState, fileData }: ResultCardProps) {
           )}
 
           {fileState.status === "success" && fileState.result && (
-            <>
-              {/* Image with Detection Visualization */}
-              {fileData && (
-                <DetectionImagePreview
-                  src={fileData.dataUrl}
-                  alt={`DICOM with detections - ${fileState.result.fileName}`}
-                  width={fileData.width}
-                  height={fileData.height}
-                  fileName={fileState.result.fileName}
-                  fileSize={fileData.fileSize}
-                  detections={fileState.result.predictions}
-                />
-              )}
+            <Tabs defaultValue="analysis" className="w-full">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="analysis">Analysis Results</TabsTrigger>
+                <TabsTrigger value="report">Diagnostic Report</TabsTrigger>
+              </TabsList>
 
-              <Separator />
+              <TabsContent value="analysis" className="space-y-4 mt-4">
+                {/* Image with Detection Visualization */}
+                {fileData && (
+                  <DetectionImagePreview
+                    src={fileData.dataUrl}
+                    alt={`DICOM with detections - ${fileState.result.fileName}`}
+                    width={fileData.width}
+                    height={fileData.height}
+                    fileName={fileState.result.fileName}
+                    fileSize={fileData.fileSize}
+                    detections={fileState.result.predictions}
+                  />
+                )}
 
-              {/* DICOM Metadata */}
-              <DicomMetadata metadata={fileState.result.metadata} />
+                <Separator />
 
-              <Separator />
+                {/* DICOM Metadata */}
+                <DicomMetadata metadata={fileState.result.metadata} />
 
-              {/* Image Info */}
-              <div>
-                <h4 className="text-sm font-medium mb-2">Image Information</h4>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 text-xs sm:text-sm">
-                  <span className="text-muted-foreground font-medium">
-                    Original Shape:
-                  </span>
-                  <span>
-                    {fileState.result.image_info.original_shape.join("×")}
-                  </span>
+                <Separator />
 
-                  <span className="text-muted-foreground font-medium">
-                    Converted Format:
-                  </span>
-                  <span>{fileState.result.image_info.converted_format}</span>
+                {/* Image Info */}
+                <div>
+                  <h4 className="text-sm font-medium mb-2">
+                    Image Information
+                  </h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 text-xs sm:text-sm">
+                    <span className="text-muted-foreground font-medium">
+                      Original Shape:
+                    </span>
+                    <span>
+                      {fileState.result.image_info.original_shape.join("×")}
+                    </span>
 
-                  <span className="text-muted-foreground font-medium">
-                    Converted Size:
-                  </span>
-                  <span>
-                    {fileState.result.image_info.converted_size.join("×")}
-                  </span>
+                    <span className="text-muted-foreground font-medium">
+                      Converted Format:
+                    </span>
+                    <span>{fileState.result.image_info.converted_format}</span>
 
-                  <span className="text-muted-foreground font-medium">
-                    Pixel Range:
-                  </span>
-                  <span>
-                    {fileState.result.image_info.pixel_array_min.toFixed(1)} -{" "}
-                    {fileState.result.image_info.pixel_array_max.toFixed(1)}
-                  </span>
+                    <span className="text-muted-foreground font-medium">
+                      Converted Size:
+                    </span>
+                    <span>
+                      {fileState.result.image_info.converted_size.join("×")}
+                    </span>
+
+                    <span className="text-muted-foreground font-medium">
+                      Pixel Range:
+                    </span>
+                    <span>
+                      {fileState.result.image_info.pixel_array_min.toFixed(1)} -{" "}
+                      {fileState.result.image_info.pixel_array_max.toFixed(1)}
+                    </span>
+                  </div>
                 </div>
-              </div>
-            </>
+              </TabsContent>
+
+              <TabsContent value="report" className="mt-4">
+                <DiagnosticReportComponent
+                  predictions={fileState.result.predictions}
+                  metadata={fileState.result.metadata}
+                  imageInfo={fileState.result.image_info}
+                />
+              </TabsContent>
+            </Tabs>
           )}
         </CardContent>
       </Card>

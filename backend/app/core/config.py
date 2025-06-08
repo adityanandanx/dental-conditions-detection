@@ -7,6 +7,10 @@ class Settings(BaseSettings):
     debug: bool = False
     roboflow_api_key: str
 
+    # OpenAI configuration for diagnostic reports
+    openai_api_key: str
+    openai_model: str = "gpt-4o-mini"
+
     # Model configuration
     default_model_id: str = "adr/6"
 

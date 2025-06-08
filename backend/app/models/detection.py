@@ -76,3 +76,39 @@ class DicomDetectionResponse(BaseModel):
 class ErrorResponse(BaseModel):
     detail: str
     error_code: str = "VALIDATION_ERROR"
+
+
+class DiagnosticReport(BaseModel):
+    """Generated diagnostic report based on dental detections"""
+
+    report: str = Field(description="The generated diagnostic report text")
+    summary: str = Field(description="Brief summary of findings")
+    recommendations: List[str] = Field(description="List of treatment recommendations")
+    severity_level: str = Field(
+        description="Overall severity assessment (low, moderate, high)"
+    )
+    generated_at: datetime = Field(default_factory=datetime.now)
+
+
+class DiagnosticReportResponse(BaseModel):
+    """Response model for diagnostic report generation"""
+
+    diagnostic_report: DiagnosticReport
+    detections_used: List[Detection] = Field(
+        description="Detections that were analyzed"
+    )
+    metadata: Optional[DicomMetadata] = Field(
+        None, description="DICOM metadata if available"
+    )
+
+
+class DiagnosticReportRequest(BaseModel):
+    """Request model for diagnostic report generation"""
+
+    predictions: List[Detection] = Field(description="Detection results to analyze")
+    metadata: Optional[DicomMetadata] = Field(
+        None, description="DICOM metadata if available"
+    )
+    image_info: Optional[Dict[str, Any]] = Field(
+        None, description="Image technical information"
+    )

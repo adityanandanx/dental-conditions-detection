@@ -4,8 +4,18 @@ import tempfile
 import os
 import logging
 
-from ..models.detection import DetectionResponse, DicomDetectionResponse, ErrorResponse
+from ..models.detection import (
+    DetectionResponse,
+    DicomDetectionResponse,
+    ErrorResponse,
+    DiagnosticReportResponse,
+    DiagnosticReportRequest,
+)
 from ..services.inference_service import InferenceService, get_inference_service
+from ..services.diagnostic_service import (
+    DiagnosticReportService,
+    get_diagnostic_report_service,
+)
 from ..core.config import get_settings, Settings
 
 logger = logging.getLogger(__name__)
@@ -184,6 +194,62 @@ async def detect_dental_conditions_dicom(
                 os.unlink(temp_file_path)
             except OSError as e:
                 logger.warning(f"Failed to delete temporary file {temp_file_path}: {e}")
+
+
+@router.post(
+    "/generate-diagnostic-report",
+    response_model=DiagnosticReportResponse,
+    responses={
+        400: {"model": ErrorResponse, "description": "Invalid input data"},
+        500: {"model": ErrorResponse, "description": "Report generation failed"},
+    },
+)
+async def generate_diagnostic_report_from_detections(
+    request: DiagnosticReportRequest,
+    diagnostic_service: Annotated[
+        DiagnosticReportService, Depends(get_diagnostic_report_service)
+    ],
+    settings: Annotated[Settings, Depends(get_settings)],
+) -> DiagnosticReportResponse:
+    """
+    Generate a comprehensive diagnostic report from detection results
+
+    This endpoint accepts detection results from previous analysis and generates
+    a professional diagnostic report using LangChain and OpenAI.
+
+    The generated report includes:
+    - Detailed analysis of detected conditions
+    - Professional medical terminology
+    - Treatment recommendations
+    - Severity assessment
+    - Summary of key findings
+
+    This endpoint is designed to be called after /detect-dicom
+    to generate reports from existing detection results.
+    """
+
+    try:
+        # Generate diagnostic report using LangChain
+        diagnostic_report = await diagnostic_service.generate_diagnostic_report(
+            detections=request.predictions,
+            metadata=request.metadata,
+            image_info=request.image_info,
+        )
+
+        return DiagnosticReportResponse(
+            diagnostic_report=diagnostic_report,
+            detections_used=request.predictions,
+            metadata=request.metadata,
+        )
+
+    except Exception as e:
+        logger.error(
+            f"Unexpected error in diagnostic report generation: {str(e)}", exc_info=True
+        )
+        raise HTTPException(
+            status_code=500,
+            detail="An unexpected error occurred during diagnostic report generation",
+        )
 
 
 @router.get("/health")

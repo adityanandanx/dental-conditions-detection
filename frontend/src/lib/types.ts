@@ -82,3 +82,20 @@ export interface DetectionProgress {
   hasAnyResults: boolean;
   hasAnyErrors: boolean;
 }
+
+// Diagnostic Report Types
+export interface DiagnosticReport {
+  report: string;
+  summary: string;
+  recommendations: string[];
+  severity_level: "low" | "moderate" | "high";
+  generated_at: string;
+}
+
+export type DiagnosticReportRequest = DicomDetectionResponse;
+
+export interface DiagnosticReportResponse {
+  diagnostic_report: DiagnosticReport;
+  detections_used: Detection[];
+  metadata?: DicomMetadata;
+}
