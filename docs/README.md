@@ -197,6 +197,7 @@ Create `.env` files in both directories:
 ```env
 ROBOFLOW_API_KEY=your_roboflow_api_key_here
 DEBUG=false
+OPENAI_API_KEY=your_openai_api_key_here
 ```
 
 **Frontend (`frontend/.env.local`)**:
