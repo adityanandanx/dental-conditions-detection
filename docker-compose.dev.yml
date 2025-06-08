@@ -8,6 +8,7 @@ services:
       - "8000:8000"
     environment:
       - ROBOFLOW_API_KEY=${ROBOFLOW_API_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
       - DEBUG=true
       - PYTHONPATH=/app
     volumes:
