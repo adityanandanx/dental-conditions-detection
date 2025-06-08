@@ -6,13 +6,22 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useGenerateDiagnosticReport } from "@/hooks/use-diagnostic-report";
+import { exportToPDF, type PDFExportData } from "@/lib/pdf-export";
 import type {
   Detection,
   DicomMetadata,
   ImageInfo,
   DiagnosticReport,
 } from "@/lib/types";
-import { FileText, Brain, AlertCircle, CheckCircle, Clock } from "lucide-react";
+import {
+  FileText,
+  Brain,
+  AlertCircle,
+  CheckCircle,
+  Clock,
+  Download,
+} from "lucide-react";
+import { toast } from "sonner";
 
 interface DiagnosticReportComponentProps {
   predictions: Detection[];
@@ -58,6 +67,7 @@ export function DiagnosticReportComponent({
   const [report, setReport] = useState<DiagnosticReport | null>(
     externalReport || null
   );
+  const [isExporting, setIsExporting] = useState(false);
   const generateReport = useGenerateDiagnosticReport();
 
   // Update local state when external report changes
@@ -79,12 +89,34 @@ export function DiagnosticReportComponent({
     }
   };
 
+  const handleExportPDF = async () => {
+    if (!report) return;
+
+    setIsExporting(true);
+    try {
+      const exportData: PDFExportData = {
+        report,
+        detections: predictions,
+        metadata,
+        imageInfo,
+        fileName: metadata.patient_name || "diagnostic-report",
+      };
+
+      await exportToPDF(exportData);
+    } catch (error) {
+      toast.error("Failed to export PDF");
+      console.log(error);
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   return (
     <Card className="w-full">
-      <CardHeader>
+      <CardHeader className="flex-1">
         <CardTitle className="flex items-center gap-2">
-          <Brain className="h-5 w-5" />
-          AI Diagnostic Report
+          <FileText className="h-5 w-5" />
+          Diagnostic Report
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -133,8 +165,7 @@ export function DiagnosticReportComponent({
               >
                 {getSeverityIcon(report.severity_level)}
                 {report.severity_level.charAt(0).toUpperCase() +
-                  report.severity_level.slice(1)}{" "}
-                Severity
+                  report.severity_level.slice(1)}
               </Badge>
             </div>
 
@@ -179,25 +210,46 @@ export function DiagnosticReportComponent({
               </p>
             </div>
 
-            {/* Generate New Report Button */}
-            <Button
-              onClick={handleGenerateReport}
-              disabled={generateReport.isPending}
-              variant="outline"
-              className="w-full"
-            >
-              {generateReport.isPending ? (
-                <>
-                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent mr-2" />
-                  Regenerating Report...
-                </>
-              ) : (
-                <>
-                  <Brain className="h-4 w-4 mr-2" />
-                  Generate New Report
-                </>
-              )}
-            </Button>
+            <div className="flex gap-4">
+              {/* Generate New Report Button */}
+              <Button
+                onClick={handleGenerateReport}
+                disabled={generateReport.isPending}
+                variant="outline"
+                className="flex-1"
+              >
+                {generateReport.isPending ? (
+                  <>
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent mr-2" />
+                    Regenerating Report...
+                  </>
+                ) : (
+                  <>
+                    <Brain className="h-4 w-4" />
+                    Generate New Report
+                  </>
+                )}
+              </Button>
+              {/* Export Button */}
+              <Button
+                onClick={handleExportPDF}
+                disabled={isExporting}
+                variant="default"
+                className="flex-1"
+              >
+                {isExporting ? (
+                  <>
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-gray-400 border-t-transparent" />
+                    Exporting PDF...
+                  </>
+                ) : (
+                  <>
+                    <Download className="h-4 w-4" />
+                    Export PDF
+                  </>
+                )}
+              </Button>
+            </div>
           </div>
         )}
 

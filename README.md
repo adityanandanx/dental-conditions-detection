@@ -57,6 +57,7 @@ Dobbe is a modern web application that leverages artificial intelligence to anal
 - **Visual Overlays**: Bounding boxes with detection confidence
 - **Metadata Display**: Complete DICOM metadata presentation
 - **Export Capabilities**: Download results and reports
+- **PDF Export**: Generate and download comprehensive diagnostic reports in PDF format
 
 ### 🤖 AI-Powered Diagnostic Reports
 
@@ -65,6 +66,16 @@ Dobbe is a modern web application that leverages artificial intelligence to anal
 - **Treatment Recommendations**: AI-generated treatment suggestions based on detections
 - **Severity Assessment**: Automated severity classification (low, moderate, high)
 - **OpenAI Integration**: Powered by GPT models for accurate medical analysis
+- **PDF Generation**: Export detailed diagnostic reports as downloadable PDF documents
+
+### 📄 PDF Export Features
+
+- **Professional Formatting**: Clean, medical-grade PDF layout with proper typography
+- **Comprehensive Content**: Includes patient information, diagnostic summary, detailed analysis, recommendations, and detection details
+- **Technical Information**: DICOM metadata, image specifications, and processing details
+- **Multi-page Support**: Automatic page breaks and pagination for lengthy reports
+- **Structured Sections**: Organized sections including patient data, severity assessment, findings, and recommendations
+- **Download Ready**: Instant PDF generation with descriptive filenames
 
 ## 🏗️ Architecture
 
