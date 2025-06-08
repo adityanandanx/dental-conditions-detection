@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -18,6 +18,8 @@ interface DiagnosticReportComponentProps {
   predictions: Detection[];
   metadata: DicomMetadata;
   imageInfo: ImageInfo;
+  report?: DiagnosticReport;
+  onReportGenerated?: (report: DiagnosticReport) => void;
 }
 
 const getSeverityColor = (severity: string) => {
@@ -50,9 +52,18 @@ export function DiagnosticReportComponent({
   predictions,
   metadata,
   imageInfo,
+  report: externalReport,
+  onReportGenerated,
 }: DiagnosticReportComponentProps) {
-  const [report, setReport] = useState<DiagnosticReport | null>(null);
+  const [report, setReport] = useState<DiagnosticReport | null>(
+    externalReport || null
+  );
   const generateReport = useGenerateDiagnosticReport();
+
+  // Update local state when external report changes
+  useEffect(() => {
+    setReport(externalReport || null);
+  }, [externalReport]);
 
   const handleGenerateReport = async () => {
     try {
@@ -62,6 +73,7 @@ export function DiagnosticReportComponent({
         image_info: imageInfo,
       });
       setReport(response.diagnostic_report);
+      onReportGenerated?.(response.diagnostic_report);
     } catch (error) {
       console.error("Failed to generate diagnostic report:", error);
     }
@@ -77,9 +89,9 @@ export function DiagnosticReportComponent({
       </CardHeader>
       <CardContent className="space-y-4">
         {!report ? (
-          <div className="text-center py-8">
-            <FileText className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-            <p className="text-gray-600 mb-4">
+          <div className="flex flex-col items-center text-center">
+            <FileText className="h-12 w-12 text-gray-400 mb-4" />
+            <p className="text-gray-600 mb-4 max-w-sm">
               Generate a comprehensive diagnostic report based on the detected
               conditions.
             </p>

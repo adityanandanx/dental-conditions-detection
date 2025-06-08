@@ -109,6 +109,6 @@ class DiagnosticReportRequest(BaseModel):
     metadata: Optional[DicomMetadata] = Field(
         None, description="DICOM metadata if available"
     )
-    image_info: Optional[Dict[str, Any]] = Field(
+    image_info: Optional[ImageInfo] = Field(
         None, description="Image technical information"
     )

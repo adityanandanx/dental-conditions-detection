@@ -14,14 +14,27 @@ import { DetectionImagePreview } from "../detection/detection-image-preview";
 import { DicomMetadata } from "../dicom/dicom-metadata";
 import { StatusIndicator } from "./status-indicator";
 import { DiagnosticReportComponent } from "./diagnostic-report";
-import { DetectionProgress, ConvertedDicomData } from "@/lib/types";
+import {
+  DetectionProgress,
+  ConvertedDicomData,
+  DiagnosticReport,
+} from "@/lib/types";
 
 interface ResultCardProps {
   fileState: DetectionProgress["files"][0];
   fileData?: ConvertedDicomData;
+  onReportGenerated?: (fileId: string, report: DiagnosticReport) => void;
 }
 
-export function ResultCard({ fileState, fileData }: ResultCardProps) {
+export function ResultCard({
+  fileState,
+  fileData,
+  onReportGenerated,
+}: ResultCardProps) {
+  const handleReportGenerated = (report: DiagnosticReport) => {
+    onReportGenerated?.(fileState.fileId, report);
+  };
+
   return (
     <TabsContent key={fileState.fileId} value={fileState.fileId}>
       <Card className="w-full">
@@ -153,6 +166,8 @@ export function ResultCard({ fileState, fileData }: ResultCardProps) {
                   predictions={fileState.result.predictions}
                   metadata={fileState.result.metadata}
                   imageInfo={fileState.result.image_info}
+                  report={fileState.diagnosticReport}
+                  onReportGenerated={handleReportGenerated}
                 />
               </TabsContent>
             </Tabs>

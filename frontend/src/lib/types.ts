@@ -74,6 +74,7 @@ export interface FileDetectionState {
   status: "pending" | "loading" | "success" | "error";
   result?: DicomDetectionResult;
   error?: Error;
+  diagnosticReport?: DiagnosticReport;
 }
 
 export interface DetectionProgress {

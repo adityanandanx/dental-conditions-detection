@@ -16,7 +16,7 @@ export default function Home() {
     dicomDetectionMutation.mutate({ files });
   };
 
-  const { detectionProgress } = dicomDetectionMutation;
+  const { detectionProgress, updateDiagnosticReport } = dicomDetectionMutation;
   const hasAnyActivity = detectionProgress.files.length > 0;
 
   return (
@@ -44,7 +44,10 @@ export default function Home() {
           )}
 
           {hasAnyActivity && (
-            <PredictionResults detectionProgress={detectionProgress} />
+            <PredictionResults
+              detectionProgress={detectionProgress}
+              onReportGenerated={updateDiagnosticReport}
+            />
           )}
         </div>
       </main>
