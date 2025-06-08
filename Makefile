@@ -72,8 +72,8 @@ clean-all: ## Remove everything including images and build cache
 
 # Setup commands
 setup: ## Initial setup - copy env files and build
-	@if [ ! -f .env ]; then echo "ROBOFLOW_API_KEY=your_api_key_here" > .env; echo "Created .env file - please edit with your API key"; fi
-	docker compose build
+    @if [ ! -f .env ]; then echo "ROBOFLOW_API_KEY=your_api_key_here" > .env; echo "OPENAI_API_KEY=your_openai_api_key_here" >> .env; echo "Created .env file - please edit with your API keys"; fi
+    docker compose build
 
 # Quick commands
 quick-start: setup up ## Setup and start production environment
