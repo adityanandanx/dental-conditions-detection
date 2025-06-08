@@ -5,6 +5,85 @@ import type {
   DicomMetadata,
   ImageInfo,
 } from "./types";
+import { getDetectionColor } from "./constants";
+
+/**
+ * Generate an annotated image with detection overlays as a data URL
+ */
+export const generateAnnotatedImage = async (
+  originalImageSrc: string,
+  detections: Detection[],
+  originalWidth: number,
+  originalHeight: number
+): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+
+      if (!ctx) {
+        reject(new Error("Failed to get canvas context"));
+        return;
+      }
+
+      // Set canvas dimensions to match original image
+      canvas.width = originalWidth;
+      canvas.height = originalHeight;
+
+      // Draw the original image
+      ctx.drawImage(img, 0, 0, originalWidth, originalHeight);
+
+      // Draw detection overlays
+      detections.forEach((detection) => {
+        const boxColor = getDetectionColor(detection.class_id);
+
+        // Draw bounding box
+        ctx.strokeStyle = boxColor;
+        ctx.lineWidth = 3;
+        ctx.strokeRect(
+          detection.x,
+          detection.y,
+          detection.width,
+          detection.height
+        );
+
+        // Draw label background
+        const label = `${detection.class} (${(
+          detection.confidence * 100
+        ).toFixed(1)}%)`;
+        ctx.font = "14px Arial";
+        const labelMetrics = ctx.measureText(label);
+        const labelWidth = labelMetrics.width + 8;
+        const labelHeight = 20;
+
+        // Position label above the box, but ensure it stays within image bounds
+        const labelX = detection.x;
+        const labelY = Math.max(labelHeight, detection.y - 2);
+
+        // Draw label background
+        ctx.fillStyle = boxColor;
+        ctx.fillRect(labelX, labelY - labelHeight, labelWidth, labelHeight);
+
+        // Draw label text
+        ctx.fillStyle = "white";
+        ctx.fillText(label, labelX + 4, labelY - 6);
+      });
+
+      // Convert canvas to data URL
+      const dataUrl = canvas.toDataURL("image/jpeg", 0.8);
+      resolve(dataUrl);
+    };
+
+    img.onerror = () => {
+      reject(new Error("Failed to load image"));
+    };
+
+    img.src = originalImageSrc;
+  });
+};
 
 export interface PDFExportData {
   report: DiagnosticReport;
@@ -12,10 +91,30 @@ export interface PDFExportData {
   metadata: DicomMetadata;
   imageInfo: ImageInfo;
   fileName: string;
+  originalImageSrc?: string; // Add original image source for annotation
 }
 
 export const exportToPDF = async (data: PDFExportData): Promise<void> => {
   try {
+    // Generate annotated image if we have the original image source and detections
+    let annotatedImageDataUrl: string | null = null;
+    if (
+      data.originalImageSrc &&
+      data.detections.length > 0 &&
+      data.imageInfo.original_shape
+    ) {
+      try {
+        annotatedImageDataUrl = await generateAnnotatedImage(
+          data.originalImageSrc,
+          data.detections,
+          data.imageInfo.original_shape[1], // width
+          data.imageInfo.original_shape[0] // height
+        );
+      } catch (error) {
+        console.warn("Failed to generate annotated image for PDF:", error);
+      }
+    }
+
     // Create a new jsPDF instance
     const pdf = new jsPDF("p", "mm", "a4");
     const pageWidth = pdf.internal.pageSize.getWidth();
@@ -69,6 +168,53 @@ export const exportToPDF = async (data: PDFExportData): Promise<void> => {
     }
 
     yPosition += 5;
+
+    // Add annotated image if available
+    if (annotatedImageDataUrl) {
+      // Check if we need a new page for the image
+      const imageMaxHeight = 100; // mm
+      if (yPosition + imageMaxHeight + 20 > pageHeight - margin) {
+        pdf.addPage();
+        yPosition = margin;
+      }
+
+      pdf.setFontSize(14);
+      pdf.setFont("helvetica", "bold");
+      pdf.text("Annotated X-Ray Image", margin, yPosition);
+      yPosition += 10;
+
+      // Calculate image dimensions to fit within content area
+      const originalWidth = data.imageInfo.original_shape?.[1] || 1;
+      const originalHeight = data.imageInfo.original_shape?.[0] || 1;
+      const aspectRatio = originalWidth / originalHeight;
+
+      let imageWidth = contentWidth;
+      let imageHeight = imageWidth / aspectRatio;
+
+      // If image is too tall, scale by height instead
+      if (imageHeight > imageMaxHeight) {
+        imageHeight = imageMaxHeight;
+        imageWidth = imageHeight * aspectRatio;
+      }
+
+      // Center the image horizontally
+      const imageX = margin + (contentWidth - imageWidth) / 2;
+
+      try {
+        pdf.addImage(
+          annotatedImageDataUrl,
+          "JPEG",
+          imageX,
+          yPosition,
+          imageWidth,
+          imageHeight
+        );
+        yPosition += imageHeight + 15;
+      } catch (error) {
+        console.warn("Failed to add image to PDF:", error);
+        // Continue without the image
+      }
+    }
 
     // Add severity and summary
     pdf.setFontSize(14);

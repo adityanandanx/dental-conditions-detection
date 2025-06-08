@@ -193,6 +193,7 @@ export function ResultCard({
                   imageInfo={fileState.result.image_info}
                   report={fileState.diagnosticReport}
                   onReportGenerated={handleReportGenerated}
+                  originalImageSrc={fileData?.dataUrl} // Pass the original image source
                 />
               </TabsContent>
             </Tabs>

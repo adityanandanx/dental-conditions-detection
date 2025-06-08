@@ -29,6 +29,7 @@ interface DiagnosticReportComponentProps {
   imageInfo: ImageInfo;
   report?: DiagnosticReport;
   onReportGenerated?: (report: DiagnosticReport) => void;
+  originalImageSrc?: string; // Add original image source for PDF annotation
 }
 
 const getSeverityColor = (severity: string) => {
@@ -63,6 +64,7 @@ export function DiagnosticReportComponent({
   imageInfo,
   report: externalReport,
   onReportGenerated,
+  originalImageSrc, // Destructure originalImageSrc prop
 }: DiagnosticReportComponentProps) {
   const [report, setReport] = useState<DiagnosticReport | null>(
     externalReport || null
@@ -100,6 +102,7 @@ export function DiagnosticReportComponent({
         metadata,
         imageInfo,
         fileName: metadata.patient_name || "diagnostic-report",
+        originalImageSrc, // Include originalImageSrc in export data
       };
 
       await exportToPDF(exportData);

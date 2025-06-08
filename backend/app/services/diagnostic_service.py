@@ -159,6 +159,15 @@ Please provide a comprehensive diagnostic report with specific findings, recomme
             # Format image info
             image_info_text = self._format_image_info(image_info)
 
+            # return DiagnosticReport(
+            #     report=f"Automated dental analysis detected {len(detections)} findings. Professional evaluation recommended.",
+            #     summary=f"Analysis completed with {len(detections)} detections",
+            #     recommendations=[
+            #         "Schedule dental consultation",
+            #         "Professional radiographic interpretation needed",
+            #     ],
+            #     severity_level="moderate",
+            # )
             # Run the chain asynchronously
             result = await asyncio.get_event_loop().run_in_executor(
                 None,
