@@ -16,8 +16,14 @@ services:
       - backend_venv:/app/.venv
       - backend_cache:/root/.cache
     working_dir: /app
-    command: /app/.venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    command: /app/.venv/bin/fastapi dev
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
     develop:
       watch:
         - action: sync
@@ -47,6 +53,18 @@ services:
     working_dir: /app
     command: pnpm dev --turbopack
     restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "require('http').get('http://localhost:3000/api/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
     develop:
       watch:
         - action: sync

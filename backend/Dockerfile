@@ -15,6 +15,7 @@ RUN apt-get update && apt-get install -y \
   libgomp1 \
   libgstreamer1.0-0 \
   libgstreamer-plugins-base1.0-0 \
+  curl \
   && rm -rf /var/lib/apt/lists/*
 
 # Copy uv from the official image
@@ -68,7 +69,7 @@ EXPOSE 8000
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
-  CMD ["/app/.venv/bin/python", "-c", "import requests; requests.get('http://localhost:8000/api/v1/health')"]
+  CMD curl -f http://localhost:8000/api/v1/health
 
 # Run the application
-CMD ["/app/.venv/bin/fastapi", "run", "app/main.py", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["/app/.venv/bin/fastapi", "run"]
