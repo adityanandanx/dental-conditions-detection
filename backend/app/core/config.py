@@ -24,6 +24,11 @@ class Settings(BaseSettings):
     ALLOWED_IMAGE_EXTENSIONS: list = [".jpg", ".jpeg", ".png", ".JPG", ".JPEG", ".PNG"]
     ALLOWED_DICOM_EXTENSIONS: list = [".dcm", ".dicom", ".DCM", ".DICOM"]
 
+    # Celery and Redis configuration
+    celery_broker_url: str = "redis://redis:6379/0"
+    celery_result_backend: str = "redis://redis:6379/0"
+    redis_url: str = "redis://redis:6379/1"
+
     model_config = SettingsConfigDict(env_file=".env")
 
 
