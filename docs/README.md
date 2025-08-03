@@ -57,6 +57,7 @@ Dobbe is a modern web application that leverages artificial intelligence to anal
 - **DICOM Processing**: Full DICOM file support with metadata extraction
 - **Drag & Drop Interface**: Intuitive file upload experience
 - **File Validation**: Comprehensive file type and size validation (max 10MB)
+- **Sample Files**: Test DICOM files available in `docs/sample/` folder for development and testing
 
 ### 📊 Comprehensive Results
 
@@ -422,10 +423,10 @@ make clean         # Clean up containers and volumes
 
 ```
 dobbe/
-├── frontend/                   # Next.js frontend application
+├── frontend/                 # Next.js frontend application
 │   ├── src/
-│   │   ├── app/               # App Router pages
-│   │   ├── components/        # React components
+│   │   ├── app/              # App Router pages
+│   │   ├── components/       # React components
 │   │   │   ├── ui/           # Base UI components
 │   │   │   ├── dicom/        # DICOM-specific components
 │   │   │   ├── detection/    # Detection result components
@@ -443,7 +444,7 @@ dobbe/
 │   ├── components.json       # shadcn/ui configuration
 │   └── .env.example          # Environment variables template
 │
-├── backend/                   # FastAPI backend application
+├── backend/                  # FastAPI backend application
 │   ├── app/
 │   │   ├── api/              # API route handlers
 │   │   ├── core/             # Core configurations
@@ -452,16 +453,16 @@ dobbe/
 │   │   └── dependencies/     # Shared dependencies
 │   ├── Dockerfile            # Backend Docker configuration
 │   ├── pyproject.toml        # Python dependencies and project config
-│   ├── uv.lock              # UV lock file
+│   ├── uv.lock               # UV lock file
 │   └── .env.example          # Environment variables template
+│
+├── docs/                     # Documentation and assets
 │
 ├── docker-compose.yml        # Production Docker Compose
 ├── docker-compose.dev.yml    # Development Docker Compose
 ├── Makefile                  # Build and development commands
-├── logo.svg                  # Project logo
-├── README.md                 # Project documentation
 ├── .env.example              # Global environment variables template
-└── .gitignore               # Git ignore patterns
+└── .gitignore                # Git ignore patterns
 ```
 
 ## ⚙️ Environment Configuration
@@ -485,6 +486,18 @@ The project includes comprehensive tooling for code quality:
 - **ESLint**: Code linting with Next.js configuration
 - **Pydantic**: Runtime type validation for Python
 - **UV**: Fast and reliable Python package management
+
+### Sample DICOM Files
+
+For testing and development purposes, sample DICOM files are provided in the `docs/sample/` directory:
+
+- `abc.dcm` - Sample dental X-ray DICOM file
+- `xyz.dcm` - Sample dental X-ray DICOM file
+- `IM-0000-0000.dcm` - Sample DICOM file with metadata
+- `IM-0001-0000.dcm` - Sample DICOM file with metadata
+- `IM-0002-0000.dcm` - Sample DICOM file with metadata
+
+These files can be used to test the DICOM processing, metadata extraction, and AI detection features without needing real patient data.
 
 ### Testing
 
