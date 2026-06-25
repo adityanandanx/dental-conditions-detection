@@ -5,83 +5,32 @@ from functools import lru_cache
 
 from langchain_openai import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
-from langchain.schema import BaseOutputParser
-from langchain.schema.output_parser import OutputParserException
-import json
+from pydantic import BaseModel, Field
 
-from ..models.detection import Detection, DicomMetadata, DiagnosticReport
+from ..models.detection import (
+    Detection,
+    DicomMetadata,
+    DiagnosticReport,
+    SeverityLevel,
+    DEFAULT_DISCLAIMER,
+)
 from ..core.config import Settings, get_settings
+from ..core.exceptions import ReportGenerationException
 
 logger = logging.getLogger(__name__)
 
 
-class DiagnosticReportParser(BaseOutputParser[DiagnosticReport]):
-    """Custom parser for diagnostic report output"""
+class _LLMDiagnosticReport(BaseModel):
+    """Schema the LLM is constrained to fill. Server-side fields
+    (generated_at, disclaimer) are deliberately excluded so the model
+    cannot omit or override them."""
 
-    def parse(self, text: str) -> DiagnosticReport:
-        try:
-            # Try to parse as JSON first
-            if text.strip().startswith("{"):
-                data = json.loads(text)
-                return DiagnosticReport(**data)
-
-            # If not JSON, parse structured text format
-            lines = text.strip().split("\n")
-            report_lines = []
-            summary = ""
-            recommendations = []
-            severity_level = "moderate"
-
-            current_section = None
-
-            for line in lines:
-                line = line.strip()
-                if not line:
-                    continue
-
-                if line.lower().startswith("summary:"):
-                    current_section = "summary"
-                    summary = line[8:].strip()
-                elif line.lower().startswith("recommendations:"):
-                    current_section = "recommendations"
-                elif line.lower().startswith("severity:"):
-                    current_section = "severity"
-                    severity_level = line[9:].strip().lower()
-                elif line.lower().startswith("report:"):
-                    current_section = "report"
-                    report_lines.append(line[7:].strip())
-                elif current_section == "report":
-                    report_lines.append(line)
-                elif current_section == "recommendations" and line.startswith("-"):
-                    recommendations.append(line[1:].strip())
-                elif current_section == "summary" and not any(
-                    x in line.lower()
-                    for x in ["recommendations:", "severity:", "report:"]
-                ):
-                    summary += " " + line
-
-            return DiagnosticReport(
-                report="\n".join(report_lines) if report_lines else text,
-                summary=summary or "No specific summary provided",
-                recommendations=recommendations or ["Consult with dental professional"],
-                severity_level=(
-                    severity_level
-                    if severity_level in ["low", "moderate", "high"]
-                    else "moderate"
-                ),
-            )
-
-        except Exception as e:
-            logger.error(f"Failed to parse diagnostic report: {e}")
-            # Fallback to basic report
-            return DiagnosticReport(
-                report=text,
-                summary="Automated analysis completed",
-                recommendations=[
-                    "Consult with dental professional for detailed evaluation"
-                ],
-                severity_level="moderate",
-            )
+    report: str = Field(description="The generated diagnostic report text")
+    summary: str = Field(description="Brief summary of findings")
+    recommendations: List[str] = Field(description="Treatment recommendations")
+    severity_level: SeverityLevel = Field(
+        description="Overall severity: low, moderate, high, or none"
+    )
 
 
 class DiagnosticReportService:
@@ -94,7 +43,6 @@ class DiagnosticReportService:
             api_key=self.settings.openai_api_key,
             temperature=0.1,  # Low temperature for consistent medical reports
         )
-        self.parser = DiagnosticReportParser()
 
         # Create the prompt template
         self.prompt = ChatPromptTemplate.from_messages(
@@ -111,14 +59,8 @@ Guidelines:
 - Suggest appropriate follow-up actions
 - Maintain a clinical, informative tone
 - Always recommend professional consultation
-
-Return your response in this exact JSON format:
-{{
-    "report": "Full detailed report text",
-    "summary": "Brief summary of key findings",
-    "recommendations": ["List", "of", "specific", "recommendations"],
-    "severity_level": "low|moderate|high"
-}}""",
+- If no findings are provided, set severity_level to "none" and state that
+  no conditions were detected rather than inventing findings""",
                 ),
                 (
                     "human",
@@ -138,8 +80,11 @@ Please provide a comprehensive diagnostic report with specific findings, recomme
             ]
         )
 
-        # Create the chain
-        self.chain = self.prompt | self.llm | self.parser
+        # Structured output: the model is constrained to the schema and
+        # parsing is handled by LangChain, not hand-rolled string slicing.
+        self.chain = self.prompt | self.llm.with_structured_output(
+            _LLMDiagnosticReport
+        )
 
     async def generate_diagnostic_report(
         self,
@@ -148,6 +93,23 @@ Please provide a comprehensive diagnostic report with specific findings, recomme
         image_info: Optional[Dict[str, Any]] = None,
     ) -> DiagnosticReport:
         """Generate a diagnostic report from detection results"""
+
+        # No-findings fallback: do NOT call the LLM, return a clean,
+        # truthful "nothing detected" report.
+        if not detections:
+            return DiagnosticReport(
+                report=(
+                    "No findings detected in this image. The automated "
+                    "analysis did not identify any cavities or periapical "
+                    "lesions. This does not rule out conditions that may "
+                    "require clinical examination."
+                ),
+                summary="No findings detected in this image.",
+                recommendations=[
+                    "Routine dental examination as clinically indicated",
+                ],
+                severity_level=SeverityLevel.none,
+            )
 
         try:
             # Format detections for the prompt
@@ -159,41 +121,35 @@ Please provide a comprehensive diagnostic report with specific findings, recomme
             # Format image info
             image_info_text = self._format_image_info(image_info)
 
-            # return DiagnosticReport(
-            #     report=f"Automated dental analysis detected {len(detections)} findings. Professional evaluation recommended.",
-            #     summary=f"Analysis completed with {len(detections)} detections",
-            #     recommendations=[
-            #         "Schedule dental consultation",
-            #         "Professional radiographic interpretation needed",
-            #     ],
-            #     severity_level="moderate",
-            # )
-            # Run the chain asynchronously
-            result = await asyncio.get_event_loop().run_in_executor(
-                None,
-                lambda: self.chain.invoke(
-                    {
-                        "detections": detection_text,
-                        "patient_info": patient_info,
-                        "image_info": image_info_text,
-                    }
-                ),
+            # Run the (sync) chain off the event loop.
+            llm_result: _LLMDiagnosticReport = await asyncio.to_thread(
+                self.chain.invoke,
+                {
+                    "detections": detection_text,
+                    "patient_info": patient_info,
+                    "image_info": image_info_text,
+                },
             )
 
-            return result
+            # Map the constrained LLM output onto the real response model.
+            # generated_at and disclaimer are applied server-side and
+            # cannot be omitted or overridden by the model.
+            return DiagnosticReport(
+                report=llm_result.report,
+                summary=llm_result.summary,
+                recommendations=llm_result.recommendations,
+                severity_level=llm_result.severity_level,
+                disclaimer=DEFAULT_DISCLAIMER,
+            )
 
         except Exception as e:
-            logger.error(f"Failed to generate diagnostic report: {e}")
-            # Return a fallback report
-            return DiagnosticReport(
-                report=f"Automated dental analysis detected {len(detections)} findings. Professional evaluation recommended.",
-                summary=f"Analysis completed with {len(detections)} detections",
-                recommendations=[
-                    "Schedule dental consultation",
-                    "Professional radiographic interpretation needed",
-                ],
-                severity_level="moderate",
-            )
+            # Do NOT fabricate a report on failure. Raise a typed exception so
+            # the route returns a structured 503 and the caller never receives
+            # a fake diagnosis.
+            logger.error(f"Failed to generate diagnostic report: {e}", exc_info=True)
+            raise ReportGenerationException(
+                "Diagnostic report generation is temporarily unavailable."
+            ) from e
 
     def _format_detections(self, detections: List[Detection]) -> str:
         """Format detection results for the prompt"""

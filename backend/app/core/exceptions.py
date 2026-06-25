@@ -17,6 +17,13 @@ class InferenceException(DentalDetectionException):
     pass
 
 
+class ReportGenerationException(DentalDetectionException):
+    """Raised when the diagnostic report could not be generated
+    (e.g. the LLM call or structured parsing failed)."""
+
+    pass
+
+
 class FileValidationException(DentalDetectionException):
     """Exception raised when file validation fails"""
 

@@ -1,4 +1,5 @@
 from fastapi import APIRouter, UploadFile, File, HTTPException, Depends
+from fastapi.responses import JSONResponse
 from typing import Annotated
 import tempfile
 import os
@@ -16,6 +17,7 @@ from ..services.diagnostic_service import (
     DiagnosticReportService,
     get_diagnostic_report_service,
 )
+from ..core.exceptions import ReportGenerationException
 from ..core.config import get_settings, Settings
 
 logger = logging.getLogger(__name__)
@@ -201,7 +203,11 @@ async def detect_dental_conditions_dicom(
     response_model=DiagnosticReportResponse,
     responses={
         400: {"model": ErrorResponse, "description": "Invalid input data"},
-        500: {"model": ErrorResponse, "description": "Report generation failed"},
+        503: {
+            "model": ErrorResponse,
+            "description": "Report generation temporarily unavailable",
+        },
+        500: {"model": ErrorResponse, "description": "Unexpected error"},
     },
 )
 async def generate_diagnostic_report_from_detections(
@@ -242,6 +248,18 @@ async def generate_diagnostic_report_from_detections(
             metadata=request.metadata,
         )
 
+    except ReportGenerationException as e:
+        # The LLM call or parsing failed. Return a structured 503 with an
+        # error_code rather than a fabricated report, so the client can
+        # retry or degrade gracefully.
+        logger.warning(f"Diagnostic report unavailable: {e}")
+        return JSONResponse(
+            status_code=503,
+            content=ErrorResponse(
+                detail=str(e),
+                error_code="REPORT_UNAVAILABLE",
+            ).model_dump(),
+        )
     except Exception as e:
         logger.error(
             f"Unexpected error in diagnostic report generation: {str(e)}", exc_info=True
